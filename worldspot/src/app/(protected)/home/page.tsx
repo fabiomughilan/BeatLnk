@@ -6,7 +6,7 @@ import { UserInfo } from '@/components/UserInfo';
 import { Verify } from '@/components/Verify';
 import { ViewPermissions } from '@/components/ViewPermissions';
 import { Marble, TopBar } from '@worldcoin/mini-apps-ui-kit-react';
-import { Reclaim } from '@/components/Reclaim';
+import Reclaim from '@/components/Reclaim';
 
 export default async function Home() {
   const session = await auth();
