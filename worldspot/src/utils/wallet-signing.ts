@@ -1,6 +1,4 @@
-import { createWalletClient, createPublicClient, http, parseEther } from 'viem';
-import { privateKeyToAccount } from 'viem/accounts';
-import { mainnet } from 'viem/chains';
+import { MiniKit } from '@worldcoin/minikit-js';
 
 // Types for wallet signing
 export interface WalletSigningData {
@@ -8,49 +6,44 @@ export interface WalletSigningData {
   signedMessage: string;
 }
 
-// Function to sign a message with wallet (you'll need to implement based on your wallet provider)
-export async function signMessageWithWallet(message: string): Promise<WalletSigningData> {
+/**
+ * Signs a message using WorldCoin MiniKit SDK commands
+ * This integrates seamlessly with your existing WorldCoin authentication flow
+ */
+export async function signMessageWithWorldCoin(message: string): Promise<WalletSigningData> {
   try {
-    // This is a placeholder implementation
-    // You'll need to integrate with your actual wallet provider (MetaMask, WalletConnect, etc.)
-    
-    // For development/testing purposes, you can use a private key
-    // In production, use proper wallet connection
-    const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY; // Add this to your .env.local
-    
-    if (!privateKey) {
-      throw new Error('Private key not found. Please add NEXT_PUBLIC_PRIVATE_KEY to your environment variables.');
-    }
-
-    const account = privateKeyToAccount(privateKey as `0x${string}`);
-    
-    const walletClient = createWalletClient({
-      account,
-      chain: mainnet,
-      transport: http()
-    });
-
-    const publicClient = createPublicClient({
-      chain: mainnet,
-      transport: http()
-    });
-
-    // Sign the message
-    const signature = await walletClient.signMessage({
+    // Use MiniKit's signMessage command
+    const result = await MiniKit.commandsAsync.signMessage({
       message: message,
     });
 
+    if (!result) {
+      throw new Error('No response from MiniKit signMessage');
+    }
+
+    if (result.finalPayload.status !== 'success') {
+      console.error('MiniKit signMessage failed', result.finalPayload.error_code);
+      throw new Error(`Signing failed: ${result.finalPayload.error_code}`);
+    }
+
+    // Extract the signature and public key from the result
+    const signature = result.finalPayload.signature;
+    const publicKey = result.finalPayload.address;
+
     return {
-      publicKey: account.address,
+      publicKey: publicKey,
       signedMessage: signature
     };
   } catch (error) {
-    console.error('Wallet signing error:', error);
-    throw new Error('Failed to sign message with wallet');
+    console.error('WorldCoin MiniKit signing error:', error);
+    throw new Error('Failed to sign message with WorldCoin MiniKit');
   }
 }
 
-// Alternative function for browser wallet integration
+/**
+ * Alternative function for browser wallet integration (fallback)
+ * Keep this as a backup option if MiniKit is not available
+ */
 export async function signMessageWithBrowserWallet(message: string): Promise<WalletSigningData> {
   if (typeof window === 'undefined' || !window.ethereum) {
     throw new Error('MetaMask or compatible wallet not found');

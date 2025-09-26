@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { ReclaimProofRequest } from '@reclaimprotocol/js-sdk';
-import { signMessageWithBrowserWallet } from '@/utils/wallet-signing';
+import { signMessageWithWorldCoin } from '@/utils/wallet-signing';
  
 function Reclaim() {
   const [proofs, setProofs] = useState<any>(null);
@@ -11,11 +11,11 @@ function Reclaim() {
  
   const uploadToLighthouse = async (proofs: any) => {
     try {
-      setUploadStatus('Signing message and uploading to Lighthouse...');
+      setUploadStatus('Signing with WorldCoin MiniKit and uploading to Lighthouse...');
       
-      // Sign message with user's wallet
+      // Sign message with WorldCoin MiniKit
       const message = `Upload Spotify verification data: ${Date.now()}`;
-      const { publicKey, signedMessage } = await signMessageWithBrowserWallet(message);
+      const { publicKey, signedMessage } = await signMessageWithWorldCoin(message);
       
       const response = await fetch('/api/upload-to-lighthouse', {
         method: 'POST',
@@ -49,20 +49,19 @@ function Reclaim() {
       setIsLoading(true);
       setUploadStatus('');
       setIpfsHash('');
-      
+
       // Step 1: Fetch the configuration from your backend
-      const response = await fetch('/api/reclaim-config', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetch('/api/generate-config');
       const { reclaimProofRequestConfig } = await response.json();
 
       // Step 2: Initialize the ReclaimProofRequest with the received configuration
       const reclaimProofRequest = await ReclaimProofRequest.fromJsonString(reclaimProofRequestConfig);
 
       // Step 3: Trigger the verification flow automatically
+      // This method detects the user's platform and provides the optimal experience:
+      // - Browser extension for desktop users (if installed)
+      // - QR code modal for desktop users (fallback)
+      // - Native app clips for mobile users
       await reclaimProofRequest.triggerReclaimFlow();
 
       // Step 4: Start listening for proof submissions
@@ -96,7 +95,7 @@ function Reclaim() {
         disabled={isLoading}
         className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
       >
-        {isLoading ? 'Verifying...' : 'Start Spotify Verification'}
+        {isLoading ? 'Verifying...' : 'Start Verification'}
       </button>
       
       {uploadStatus && (
