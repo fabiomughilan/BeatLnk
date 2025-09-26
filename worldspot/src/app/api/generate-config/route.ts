@@ -1,48 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { ReclaimProofRequest } from '@reclaimprotocol/js-sdk';
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await auth();
-    
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const APP_ID = process.env.NEXT_PUBLIC_APP_ID;
+    const APP_SECRET = process.env.NEXT_PUBLIC_SECRET;
+    const PROVIDER_ID = process.env.NEXT_PUBLIC_RECLAIM_PROVIDER_ID;
+
+    if (!APP_ID || !APP_SECRET || !PROVIDER_ID) {
+      return NextResponse.json({ 
+        error: 'Missing Reclaim environment variables' 
+      }, { status: 500 });
     }
 
-    const reclaimProofRequestConfig = {
-      sessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      provider: 'spotify',
-      userId: session.user.walletAddress,
-      timestamp: Date.now(),
-      config: {
-        redirectUrl: `${process.env.NEXTAUTH_URL}/reclaim-callback`,
-        scopes: ['user-read-private', 'user-read-email', 'user-top-read'],
-        claims: [
-          {
-            provider: 'spotify',
-            params: {
-              username: 'required',
-              email: 'required',
-              topTracks: 'optional',
-              topArtists: 'optional'
-            }
-          }
-        ]
-      },
-    };
+    const reclaimProofRequest = await ReclaimProofRequest.init(APP_ID, APP_SECRET, PROVIDER_ID);
+    
+    // Set the callback URL for receiving proofs
+    const BASE_URL = 'https://82f141aa390b.ngrok-free.app';
+    reclaimProofRequest.setAppCallbackUrl(BASE_URL + '/api/receive-proofs');
+    
+    const reclaimProofRequestConfig = reclaimProofRequest.toJsonString();
 
-    console.log('Generated config:', reclaimProofRequestConfig);
-    const jsonString = JSON.stringify(reclaimProofRequestConfig);
-    console.log('JSON string:', jsonString);
-
-    return NextResponse.json({ 
-      reclaimProofRequestConfig: jsonString
-    });
+    return NextResponse.json({ reclaimProofRequestConfig });
     
   } catch (error) {
-    console.error('Reclaim config generation error:', error);
+    console.error('Error generating request config:', error);
     return NextResponse.json({ 
-      error: 'Failed to generate Reclaim config' 
+      error: 'Failed to generate request config' 
     }, { status: 500 });
   }
 }

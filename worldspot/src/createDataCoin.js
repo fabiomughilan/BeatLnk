@@ -10,7 +10,7 @@ const { getChainConfig, getAssetConfig } = require("./chainConfig.js");
 // ============================================================================
 
 // 🌐 BLOCKCHAIN CONFIGURATION
-const chainName = "sepolia"; // Available options: "sepolia", "base", "polygon", "worldchain"
+const chainName = "worldchain"; // Available options: "sepolia", "base", "polygon", "worldchain"
 
 // 💰 DATACOIN BASIC INFORMATION
 const name = "Wind Coin"; // Name of your DataCoin

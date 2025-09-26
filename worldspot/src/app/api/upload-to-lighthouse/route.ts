@@ -10,23 +10,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { proofs, publicKey, signedMessage } = await req.json();
+    const { proofs } = await req.json();
 
-    if (!proofs || !publicKey || !signedMessage) {
+    if (!proofs) {
       return NextResponse.json({ 
-        error: 'Missing required fields: proofs, publicKey, or signedMessage' 
+        error: 'Missing required field: proofs' 
       }, { status: 400 });
     }
 
-    // Convert proofs to JSON string for encryption
+    // Convert proofs to JSON string for upload
     const proofsText = JSON.stringify(proofs, null, 2);
     
-    // Upload encrypted data to Lighthouse
-    const response = await lighthouse.textUploadEncrypted(
+    // Upload JSON data to Lighthouse (unencrypted)
+    const response = await lighthouse.uploadText(
       proofsText,
-      process.env.LIGHTHOUSE_API_KEY!,
-      publicKey,
-      signedMessage,
+      process.env.LIGHTHOUSE_API!,
       `spotify-proofs-${Date.now()}`
     );
 

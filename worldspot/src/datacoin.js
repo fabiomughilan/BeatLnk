@@ -4,8 +4,8 @@ const DatacoinABI = require("./abi/DataCoin.js");
 
 const { getChainConfig } = require("./chainConfig.js");
 
-const chainName = "sepolia"; // Available options: "sepolia", "base", "polygon", "worldchain"
-const dataCoinAddress = "0xa473726d071e483c4960e27c13ed8f1427c3d687"; // Valid DataCoin address for the selected chain
+const chainName = "worldchain"; // Available options: "sepolia", "base", "polygon", "worldchain"
+const dataCoinAddress = process.env.WORLD_DATA_COIN_ADDRESS; 
 
 const { rpc } = getChainConfig(chainName);
 const provider = new ethers.JsonRpcProvider(rpc);

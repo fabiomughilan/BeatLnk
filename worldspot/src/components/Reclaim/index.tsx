@@ -1,7 +1,6 @@
 'use client';
 import { useState } from 'react';
 import { ReclaimProofRequest } from '@reclaimprotocol/js-sdk';
-import { signMessageWithWorldCoin } from '@/utils/wallet-signing';
  
 function Reclaim() {
   const [proofs, setProofs] = useState<any>(null);
@@ -11,21 +10,15 @@ function Reclaim() {
  
   const uploadToLighthouse = async (proofs: any) => {
     try {
-      setUploadStatus('Signing with WorldCoin MiniKit and uploading to Lighthouse...');
+      setUploadStatus('Uploading to Lighthouse...');
       
-      // Sign message with WorldCoin MiniKit
-      const message = `Upload Spotify verification data: ${Date.now()}`;
-      const { publicKey, signedMessage } = await signMessageWithWorldCoin(message);
-      
-      const response = await fetch('/api/upload-to-lighthouse', {
+      const response = await fetch('https://82f141aa390b.ngrok-free.app/api/upload-to-lighthouse', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          proofs,
-          publicKey,
-          signedMessage
+          proofs
         }),
       });
 
@@ -51,7 +44,7 @@ function Reclaim() {
       setIpfsHash('');
 
       // Step 1: Fetch the configuration from your backend
-      const response = await fetch('/api/generate-config');
+      const response = await fetch('https://82f141aa390b.ngrok-free.app/api/generate-config');
       const { reclaimProofRequestConfig } = await response.json();
 
       // Step 2: Initialize the ReclaimProofRequest with the received configuration
