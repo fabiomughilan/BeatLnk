@@ -1,8 +1,8 @@
 const { ethers } = require("ethers");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
-const DatacoinFactoryABI = require("./abi/DataCoinFactory.js");
-const ERC20ABI = require("./abi/ERC20");
+const DatacoinFactoryABI = require("../worldspot/src/abi/DataCoinFactory.js");
+const ERC20ABI = require("../worldspot/src/abi/ERC20.js");
 const { getChainConfig, getAssetConfig } = require("./chainConfig.js");
 
 // ============================================================================

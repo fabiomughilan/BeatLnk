@@ -1,6 +1,6 @@
 const { ethers } = require("ethers");
 require("dotenv").config();
-const DatacoinABI = require("./abi/DataCoin.js");
+const DatacoinABI = require("../worldspot/src/abi/DataCoin.js");
 
 const { getChainConfig } = require("./chainConfig.js");
 
