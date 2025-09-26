@@ -1,3 +1,4 @@
+'use client';
 import { useState } from 'react';
 import { ReclaimProofRequest } from '@reclaimprotocol/js-sdk';
 import { signMessageWithBrowserWallet } from '@/utils/wallet-signing';
