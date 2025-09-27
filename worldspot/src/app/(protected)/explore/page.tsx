@@ -1,6 +1,8 @@
 import ProofRetriever from "@/components/ProofRetriever";
 import AutoProofFetcher from "@/components/AutoProofFetcher";
 import ProofHistory from "@/components/ProofHistory";
+import IPNSDataViewer from "@/components/IPNSDataViewer";
+import DebugPanel from "@/components/DebugPanel";
 
 export default function Explore() {
     return (
@@ -32,6 +34,17 @@ export default function Explore() {
                 Explore Rooms
               </button>
             </div>
+          </div>
+
+          {/* Debug Panel */}
+          <div className="mb-8">
+            <DebugPanel />
+          </div>
+
+          {/* IPNS Data Viewer Section */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-center mb-6">🔗 IPNS Data Source</h2>
+            <IPNSDataViewer />
           </div>
 
           {/* Auto Proof Fetcher Section */}

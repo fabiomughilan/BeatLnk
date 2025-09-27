@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ReclaimProofRequest } from '@reclaimprotocol/js-sdk';
+import { auth } from '@/auth';
 
 export async function GET(req: NextRequest) {
   try {
+    // Get current session to include wallet address
+    const session = await auth();
+    const walletAddress = session?.user?.walletAddress || session?.user?.id || 'unknown';
+    
+    console.log(`🔧 Generating config for wallet: ${walletAddress}`);
+
     const APP_ID = process.env.NEXT_PUBLIC_APP_ID;
     const APP_SECRET = process.env.NEXT_PUBLIC_SECRET;
     const PROVIDER_ID = process.env.NEXT_PUBLIC_RECLAIM_PROVIDER_ID;
@@ -15,9 +22,12 @@ export async function GET(req: NextRequest) {
 
     const reclaimProofRequest = await ReclaimProofRequest.init(APP_ID, APP_SECRET, PROVIDER_ID);
     
-    // Set the callback URL for receiving proofs
+    // Set the callback URL with wallet address as query parameter
     const BASE_URL = 'https://82f141aa390b.ngrok-free.app';
-    reclaimProofRequest.setAppCallbackUrl(BASE_URL + '/api/receive-proofs');
+    const callbackUrl = `${BASE_URL}/api/receive-proofs?wallet=${encodeURIComponent(walletAddress)}`;
+    reclaimProofRequest.setAppCallbackUrl(callbackUrl);
+    
+    console.log(`🔗 Callback URL: ${callbackUrl}`);
     
     const reclaimProofRequestConfig = reclaimProofRequest.toJsonString();
 
