@@ -71,7 +71,7 @@ export default function AutoProofFetcher() {
         }
       });
       
-    } catch (_err) {
+    } catch {
       // Show sample data on error
       setProofData({
         metadata: {

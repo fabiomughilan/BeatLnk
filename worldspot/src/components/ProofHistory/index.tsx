@@ -54,7 +54,7 @@ export default function ProofHistory() {
         allProofs: []
       });
       
-    } catch (_err) {
+    } catch {
       // Show empty state on error
       setProofsData({
         userId: 'unknown',
