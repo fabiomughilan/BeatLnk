@@ -33,7 +33,7 @@ export default function IPNSDataViewer() {
       setLoading(true);
       setError('');
       
-      const response = await fetch('/api/user-spotify-data');
+      const response = await fetch('https://82f141aa390b.ngrok-free.app/api/user-spotify-data');
       const result = await response.json();
       
       if (result.success) {

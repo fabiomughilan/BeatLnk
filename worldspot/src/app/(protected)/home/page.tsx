@@ -48,6 +48,15 @@ export default async function Home() {
           }
         />
       </Page.Header>
+<<<<<<< HEAD
+=======
+      <Page.Main className="flex flex-col items-center justify-start gap-4 mb-16">
+        <UserInfo />
+
+     
+        <Reclaim />
+       
+>>>>>>> parent of a7acd92 (changes)
 
       <Page.Main className="flex flex-col items-center justify-start gap-6 mb-20">
         {/* Hero / greeting */}

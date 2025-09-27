@@ -22,7 +22,11 @@ export async function GET() {
     const reclaimProofRequest = await ReclaimProofRequest.init(APP_ID, APP_SECRET, PROVIDER_ID);
     
     // Set the callback URL with wallet address as query parameter
+<<<<<<< HEAD
     const BASE_URL = 'https://97b4ca846410.ngrok-free.app';
+=======
+    const BASE_URL = 'https://82f141aa390b.ngrok-free.app';
+>>>>>>> parent of a7acd92 (changes)
     const callbackUrl = `${BASE_URL}/api/receive-proofs?wallet=${encodeURIComponent(walletAddress)}`;
     reclaimProofRequest.setAppCallbackUrl(callbackUrl);
     

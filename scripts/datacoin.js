@@ -100,11 +100,10 @@ const claimVesting = async () => {
 };
 
 // ============= Grant Minter Role =============
-const mintRoleAddress = "0x0035cd0CA79A5b156d5443b698655DBDc5403B45";
-grantMinterRole(mintRoleAddress);
+// const mintRoleAddress = "0x0035cd0CA79A5b156d5443b698655DBDc5403B45";
+// grantMinterRole(mintRoleAddress);
 
-// ============= Get Coin Info =============
-getCoinInfo();
+ getCoinInfo();
 
 // ============= Mint Tokens ===============
 const receiverAddress = "0x0035cd0CA79A5b156d5443b698655DBDc5403B45";
