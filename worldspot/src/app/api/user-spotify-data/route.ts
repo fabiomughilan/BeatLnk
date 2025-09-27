@@ -81,16 +81,14 @@ export async function GET(req: NextRequest) {
     const latestProof = allProofs[allProofs.length - 1];
     
     // Extract and analyze Spotify data from IPNS
-    const likedSongs = (latestProof as Record<string, unknown>)?.publicData as Record<string, unknown> || {};
-    const songs = (likedSongs.liked_songs as unknown[]) || [];
+    const likedSongs = (latestProof as any)?.publicData?.liked_songs || [];
     const artistCount: Record<string, number> = {};
 
     // Count artist occurrences
-    for (const item of songs) {
-      const track = (item as Record<string, unknown>)?.track as Record<string, unknown> || {};
-      const artists = (track.artists as Record<string, unknown>[]) || [];
+    for (const item of likedSongs) {
+      const artists = (item as any)?.track?.artists ?? [];
       for (const artist of artists) {
-        const name = (artist as Record<string, unknown>)?.name as string;
+        const name = artist?.name;
         if (!name) continue;
         artistCount[name] = (artistCount[name] || 0) + 1;
       }
