@@ -1,12 +1,12 @@
 import { auth } from '@/auth';
 import { Page } from '@/components/PageLayout';
-import { Pay } from '@/components/Pay';
-import { Transaction } from '@/components/Transaction';
+// import { Pay } from '@/components/Pay';
+// import { Transaction } from '@/components/Transaction';
 import { UserInfo } from '@/components/UserInfo';
-import { Verify } from '@/components/Verify';
-import { ViewPermissions } from '@/components/ViewPermissions';
+// import { Verify } from '@/components/Verify';
 import { Marble, TopBar } from '@worldcoin/mini-apps-ui-kit-react';
 import Reclaim from '@/components/Reclaim';
+import ArtistDashboard from '@/components/ArtistDashboard';
 
 export default async function Home() {
   const session = await auth();
@@ -28,11 +28,13 @@ export default async function Home() {
       </Page.Header>
       <Page.Main className="flex flex-col items-center justify-start gap-4 mb-16">
         <UserInfo />
-        <Verify />
-        <Pay />
+
+     
         <Reclaim />
-        <Transaction />
-        <ViewPermissions />
+        <ArtistDashboard/>
+
+
+
       </Page.Main>
     </>
   );
