@@ -11,7 +11,7 @@ export default function DebugPanel() {
   const fetchDebugData = async () => {
     try {
       setLoading(true);
-      const response = await fetch(' https://61923ee034bd.ngrok-free.app/api/debug-data');
+      const response = await fetch(' https://bok-embowed-season.ngrok-free.dev/api/debug-data');
       const result = await response.json();
       setDebugData(result);
     } catch (error) {
@@ -25,7 +25,7 @@ export default function DebugPanel() {
   const syncWalletData = async () => {
     try {
       setSyncing(true);
-      const response = await fetch(' https://61923ee034bd.ngrok-free.app/api/sync-wallet-data', {
+      const response = await fetch(' https://bok-embowed-season.ngrok-free.dev/api/sync-wallet-data', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

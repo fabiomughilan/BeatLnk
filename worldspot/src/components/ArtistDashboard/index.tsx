@@ -8,6 +8,7 @@ interface ArtistData {
 
 interface ArtistAnalysis {
     topArtist: ArtistData | null;
+    top2Artists: ArtistData[];
     allArtists: Record<string, number>;
     totalSongs: number;
     nftEligible: boolean;
@@ -20,8 +21,8 @@ export default function ArtistDashboard() {
     const fetchArtistAnalysis = async () => {
         try {
             setLoading(true);
-            // Fetch from IPNS-based endpoint
-            const response = await fetch(' https://61923ee034bd.ngrok-free.app/api/user-spotify-data', {
+            // Fetch from LnK IPNS-based endpoint
+            const response = await fetch('https://bok-embowed-season.ngrok-free.dev/api/user-spotify-data', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -39,6 +40,7 @@ export default function ArtistDashboard() {
                 const ipnsData = result.data;
                 setArtistAnalysis({
                     topArtist: ipnsData.spotifyData.topArtist,
+                    top2Artists: ipnsData.spotifyData.top2Artists || [],
                     allArtists: ipnsData.spotifyData.allArtists,
                     totalSongs: ipnsData.spotifyData.totalSongs,
                     nftEligible: ipnsData.nftStatus.hasEligibleNFTs
@@ -87,13 +89,13 @@ export default function ArtistDashboard() {
                 </p>
             </div>
 
-      {/* Top 2 Artists Cards */}
-      {sortedArtists.length > 0 && (
+      {/* Top 2 Artists Cards - Using LnK Data Structure */}
+      {artistAnalysis.top2Artists && artistAnalysis.top2Artists.length > 0 && (
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">🏆 Your Top Artists</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">🏆 Your Top 2 Artists</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {sortedArtists.slice(0, 2).map(([artist, count], index) => (
-              <div key={artist} className={`relative p-6 rounded-xl border-2 ${
+            {artistAnalysis.top2Artists.map((artist, index) => (
+              <div key={artist.name} className={`relative p-6 rounded-xl border-2 ${
                 index === 0 
                   ? 'border-yellow-300 bg-gradient-to-br from-yellow-50 to-orange-50' 
                   : 'border-gray-300 bg-gradient-to-br from-gray-50 to-blue-50'
@@ -117,36 +119,36 @@ export default function ArtistDashboard() {
                   <h3 className={`text-2xl font-bold mb-2 ${
                     index === 0 ? 'text-yellow-800' : 'text-gray-800'
                   }`}>
-                    {artist}
+                    {artist.name}
                   </h3>
                   
                   <p className="text-gray-600 text-lg mb-4">
-                    {count} song{count !== 1 ? 's' : ''} in your library
+                    {artist.count} song{artist.count !== 1 ? 's' : ''} in your library
                   </p>
                   
                   {/* Progress Bar */}
                   <div className="mb-4">
                     <div className="flex justify-between items-center mb-1">
                       <span className="text-sm text-gray-600">Progress to NFT</span>
-                      <span className="text-sm font-medium">{Math.min(count, 10)}/10</span>
+                      <span className="text-sm font-medium">{Math.min(artist.count, 10)}/10</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-3">
                       <div 
                         className={`h-3 rounded-full transition-all duration-300 ${
                           index === 0 ? 'bg-yellow-500' : 'bg-gray-400'
                         }`}
-                        style={{ width: `${Math.min((count / 10) * 100, 100)}%` }}
+                        style={{ width: `${Math.min((artist.count / 10) * 100, 100)}%` }}
                       ></div>
                     </div>
                   </div>
                   
                   {/* NFT Status */}
                   <div className={`px-4 py-2 rounded-full text-sm font-semibold text-center ${
-                    count >= 10 
+                    artist.count >= 10 
                       ? 'bg-green-100 text-green-800' 
                       : 'bg-yellow-100 text-yellow-800'
                   }`}>
-                    {count >= 10 ? '🎉 NFT Ready!' : `${10 - count} more songs for NFT`}
+                    {artist.count >= 10 ? '🎉 NFT Ready!' : `${10 - artist.count} more songs for NFT`}
                   </div>
                 </div>
               </div>
@@ -154,7 +156,7 @@ export default function ArtistDashboard() {
           </div>
           
           {/* Show message if only 1 artist */}
-          {sortedArtists.length === 1 && (
+          {artistAnalysis.top2Artists.length === 1 && (
             <div className="mt-6 p-4 bg-blue-50 rounded-lg text-center">
               <p className="text-blue-700">
                 🎵 Add more artists to your library to see your top 2!

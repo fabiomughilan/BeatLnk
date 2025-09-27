@@ -1,12 +1,14 @@
 'use client';
 import { useState } from 'react';
 import { ReclaimProofRequest } from '@reclaimprotocol/js-sdk';
+import TokenMinting from '../TokenMinting';
  
 function Reclaim() {
   const [proofs, setProofs] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<string>('');
   const [ipfsHash, setIpfsHash] = useState<string>('');
+  const [showTokenMinting, setShowTokenMinting] = useState(false);
  
   const uploadToLighthouse = async (proofs: any) => {
     try {
@@ -28,6 +30,8 @@ function Reclaim() {
         setUploadStatus('Successfully uploaded to IPFS!');
         setIpfsHash(result.hash);
         console.log('IPFS Hash:', result.hash);
+        // Show token minting option after successful upload
+        setShowTokenMinting(true);
       } else {
         setUploadStatus(`Upload failed: ${result.error}`);
       }
@@ -225,6 +229,18 @@ function Reclaim() {
               </div>
             </details>
           </div>
+        </div>
+      )}
+
+      {/* Token Minting Section - Shows after successful verification */}
+      {showTokenMinting && (
+        <div className="mt-6">
+          <TokenMinting 
+            onMintingComplete={() => {
+              console.log('Token minting completed!');
+              // You can add additional logic here if needed
+            }}
+          />
         </div>
       )}
 

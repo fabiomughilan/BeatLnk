@@ -3,6 +3,7 @@ import { Page } from '@/components/PageLayout';
 import { UserInfo } from '@/components/UserInfo';
 import { Marble, TopBar } from '@worldcoin/mini-apps-ui-kit-react';
 import Reclaim from '@/components/Reclaim';
+import TopArtists from '@/components/TopArtists';
 
 export default async function Home() {
   const session = await auth();
@@ -21,20 +22,13 @@ export default async function Home() {
       {/* Subtle animated gradient background */}
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-0 -z-10 opacity-70"
+        className="pointer-events-none fixed inset-0 -z-10 opacity-70 bg-gradient-radial animate-bg-shift"
         style={{
           backgroundImage:
             'radial-gradient(60rem 40rem at 20% 20%, rgba(14,165,233,.15), transparent), radial-gradient(60rem 60rem at 80% 70%, rgba(99,102,241,.15), transparent)',
           backgroundSize: '200% 200%',
-          animation: 'bgShift 18s ease-in-out infinite alternate',
         }}
       />
-      <style jsx global>{`
-        @keyframes bgShift {
-          from { background-position: 0% 0%; }
-          to   { background-position: 100% 100%; }
-        }
-      `}</style>
 
       <Page.Header className="p-0 sticky top-0 z-40">
         <TopBar
@@ -89,6 +83,15 @@ export default async function Home() {
               </div>
               <div className="p-5">
                 <Reclaim />
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-0">
+              <div className="border-b border-white/10 px-5 py-3">
+                <h2 className="text-base font-semibold">Your Top Artists</h2>
+              </div>
+              <div className="p-5">
+                <TopArtists />
               </div>
             </div>
           </div>

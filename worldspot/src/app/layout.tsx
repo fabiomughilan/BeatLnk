@@ -1,5 +1,6 @@
 import { auth } from '@/auth';
 import ClientProviders from '@/providers';
+import HydrationFix from '@/components/HydrationFix';
 import '@worldcoin/mini-apps-ui-kit-react/styles.css';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
@@ -28,7 +29,49 @@ export default async function RootLayout({
   const session = await auth();
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} `}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Fix hydration mismatch caused by browser extensions
+              (function() {
+                if (typeof window !== 'undefined') {
+                  const fixExtensionAttributes = () => {
+                    const body = document.body;
+                    if (body) {
+                      const extensionAttributes = [
+                        'data-channel-name',
+                        'data-extension-id', 
+                        'data-new-gr-c-s-check-loaded',
+                        'data-gr-ext-installed'
+                      ];
+                      
+                      extensionAttributes.forEach(attr => {
+                        if (body.hasAttribute(attr)) {
+                          body.removeAttribute(attr);
+                        }
+                      });
+                    }
+                  };
+                  
+                  // Run immediately
+                  fixExtensionAttributes();
+                  
+                  // Run after DOM is ready
+                  if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', fixExtensionAttributes);
+                  }
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body 
+        className={`${geistSans.variable} ${geistMono.variable} `}
+        suppressHydrationWarning={true}
+      >
+        <HydrationFix />
         <ClientProviders session={session}>{children}</ClientProviders>
       </body>
     </html>

@@ -18,6 +18,22 @@ export async function GET(req: NextRequest) {
                          session.user?.id || 
                          'unknown';
 
+    // Debug logging
+    console.log('API Debug - Wallet Address:', walletAddress);
+    console.log('API Debug - Query Params:', searchParams.get('wallet'));
+    console.log('API Debug - Session User:', session.user);
+
+    // Validate wallet address
+    if (!walletAddress || walletAddress === 'unknown') {
+      return NextResponse.json({
+        success: false,
+        error: 'Wallet address is required. Please provide ?wallet=<address>',
+        data: {
+          walletAddress: walletAddress || 'not provided',
+          message: 'No valid wallet address found in session or query params'
+        }
+      }, { status: 400 });
+    }
 
     // Try to fetch user's proofs directly from IPNS first
     let allProofs;
