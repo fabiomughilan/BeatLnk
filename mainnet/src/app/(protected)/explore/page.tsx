@@ -14,13 +14,13 @@ export default function Explore() {
   const [selected, setSelected] = useState<SelectedArtist | null>(
     initialArtistId ? { id: initialArtistId } : null
   );
-  const [balance, setBalance] = useState<number>(0); // TODO: fetch real VibeCoin balance
-  const [claiming, setClaiming] = useState<'poster' | 'pass' | null>(null);
-  const [claimed, setClaimed] = useState<Record<string, { poster?: boolean; pass?: boolean }>>({});
+  const [likedSongsCount, setLikedSongsCount] = useState<number>(0); // User's liked songs count
+  const [claiming, setClaiming] = useState<'poster' | 'pass' | 'image1' | 'image2' | null>(null);
+  const [claimed, setClaimed] = useState<Record<string, { poster?: boolean; pass?: boolean; image1?: boolean; image2?: boolean }>>({});
 
   // Derived per-artist claim state
   const claimedForArtist = useMemo(
-    () => (selected ? claimed[selected.id] ?? { poster: false, pass: false } : { poster: false, pass: false }),
+    () => (selected ? claimed[selected.id] ?? { poster: false, pass: false, image1: false, image2: false } : { poster: false, pass: false, image1: false, image2: false }),
     [claimed, selected]
   );
 
@@ -47,14 +47,14 @@ export default function Explore() {
     setSelected(artist);
   }, []);
 
-  const refreshBalance = useCallback(async () => {
-    // TODO: replace with real balance fetch from World mainnet (VibeCoin)
-    // e.g., const b = await getVibeCoinBalance(address)
-    setBalance((b) => (b === 0 ? 120 : b)); // simple demo toggle
+  const refreshLikedSongs = useCallback(async () => {
+    // TODO: replace with real liked songs fetch from Spotify API
+    // e.g., const count = await getLikedSongsCount(userAddress)
+    setLikedSongsCount((count) => (count === 0 ? 15 : count)); // demo: 15 liked songs
   }, []);
 
   const claim = useCallback(
-    async (type: 'poster' | 'pass') => {
+    async (type: 'poster' | 'pass' | 'image1' | 'image2') => {
       if (!selected) return;
       setClaiming(type);
       try {
@@ -72,6 +72,8 @@ export default function Explore() {
           [selected.id]: {
             poster: type === 'poster' ? true : prev[selected.id]?.poster,
             pass: type === 'pass' ? true : prev[selected.id]?.pass,
+            image1: type === 'image1' ? true : prev[selected.id]?.image1,
+            image2: type === 'image2' ? true : prev[selected.id]?.image2,
           },
         }));
       } finally {
@@ -81,27 +83,43 @@ export default function Explore() {
     [selected]
   );
 
+  // Download function for images
+  const downloadImage = useCallback((imageName: string, imagePath: string) => {
+    const link = document.createElement('a');
+    link.href = imagePath;
+    link.download = imageName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }, []);
+
   const canClaim = Boolean(selected);
+  const canClaimImages = likedSongsCount > 10; // Requirement: more than 10 liked songs
   const artistTitle = selected?.name ? `${selected.name}` : selected?.id ? `Artist #${selected.id}` : 'Select an artist';
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center mb-8">VibeCoin Rewards</h1>
+        <h1 className="text-3xl font-bold text-center mb-8">Free Music Perks</h1>
 
-        {/* Balance strip */}
+        {/* Liked Songs strip */}
         <div className="flex items-center justify-center mb-6">
           <div className="inline-flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-4 py-2">
-            <span className="text-sm opacity-80">Your Balance:</span>
-            <span className="font-bold text-lg">{balance} VibeCoin</span>
+            <span className="text-sm opacity-80">Your Liked Songs:</span>
+            <span className="font-bold text-lg">{likedSongsCount}</span>
             <button
-              onClick={refreshBalance}
+              onClick={refreshLikedSongs}
               className="text-sm rounded-full border border-white/15 px-3 py-1 hover:bg-white/5 transition"
-              title="Refresh balance"
+              title="Refresh liked songs count"
             >
               Refresh
             </button>
           </div>
+          {likedSongsCount > 10 && (
+            <div className="ml-4 inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/30 rounded-full px-3 py-1">
+              <span className="text-emerald-300 text-sm">✓ Eligible for digital perks</span>
+            </div>
+          )}
         </div>
 
         {/* Artist chooser + details */}
@@ -146,7 +164,7 @@ export default function Explore() {
             {!selected && <p className="text-sm opacity-70 mt-1">Pick an artist above to view perks.</p>}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Limited-Edition Poster */}
             <div className="bg-black/30 rounded-xl border border-white/10 overflow-hidden">
               <div className="relative">
@@ -177,12 +195,12 @@ export default function Explore() {
                 </p>
 
                 <div className="mt-3 flex items-center justify-between">
-                  <span className="text-yellow-300 font-semibold text-sm">Cost: 50 VibeCoin</span>
+                  <span className="text-emerald-300 font-semibold text-sm">Free • Requires artist selection</span>
                   <button
-                    disabled={!canClaim || claimedForArtist.poster || claiming === 'poster' || balance < 50}
+                    disabled={!canClaim || claimedForArtist.poster || claiming === 'poster'}
                     onClick={() => claim('poster')}
                     className={`rounded-full px-4 py-2 text-sm font-medium transition
-                      ${!canClaim || claimedForArtist.poster || claiming === 'poster' || balance < 50
+                      ${!canClaim || claimedForArtist.poster || claiming === 'poster'
                         ? 'bg-white/10 opacity-60 cursor-not-allowed'
                         : 'bg-white text-neutral-900 hover:opacity-90'}`}
                   >
@@ -218,12 +236,12 @@ export default function Explore() {
                 </p>
 
                 <div className="mt-3 flex items-center justify-between">
-                  <span className="text-yellow-300 font-semibold text-sm">Cost: 25 VibeCoin</span>
+                  <span className="text-emerald-300 font-semibold text-sm">Free • Requires artist selection</span>
                   <button
-                    disabled={!canClaim || claimedForArtist.pass || claiming === 'pass' || balance < 25}
+                    disabled={!canClaim || claimedForArtist.pass || claiming === 'pass'}
                     onClick={() => claim('pass')}
                     className={`rounded-full px-4 py-2 text-sm font-medium transition
-                      ${!canClaim || claimedForArtist.pass || claiming === 'pass' || balance < 25
+                      ${!canClaim || claimedForArtist.pass || claiming === 'pass'
                         ? 'bg-white/10 opacity-60 cursor-not-allowed'
                         : 'bg-white text-neutral-900 hover:opacity-90'}`}
                   >
@@ -232,11 +250,124 @@ export default function Explore() {
                 </div>
               </div>
             </div>
+
+            {/* Exclusive Image 1 */}
+            <div className="bg-black/30 rounded-xl border border-white/10 overflow-hidden">
+              <div className="relative">
+                <img
+                  src="/image1.png"
+                  alt="Exclusive Image 1"
+                  className="w-full h-44 object-cover"
+                />
+                <span className="absolute top-3 left-3 rounded-full bg-white/10 backdrop-blur px-3 py-1 text-xs">
+                  Exclusive • Digital
+                </span>
+              </div>
+              <div className="p-4">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-semibold">Exclusive Image 1</h3>
+                  <span
+                    className={`ml-auto rounded-full px-2 py-0.5 text-xs ${
+                      claimedForArtist.image1
+                        ? 'bg-emerald-400/15 text-emerald-300'
+                        : 'bg-amber-400/15 text-amber-300'
+                    }`}
+                  >
+                    {claimedForArtist.image1 ? 'Claimed' : 'Unclaimed'}
+                  </span>
+                </div>
+                <p className="text-xs opacity-75 mt-1">
+                  High-resolution digital artwork. Download and use as wallpaper or print.
+                </p>
+
+                <div className="mt-3 flex items-center justify-between">
+                  <span className="text-emerald-300 font-semibold text-sm">Free • Requires 10+ liked songs</span>
+                  <div className="flex gap-2">
+                    {claimedForArtist.image1 ? (
+                      <button
+                        onClick={() => downloadImage('exclusive-image-1.png', '/image1.png')}
+                        className="rounded-full px-3 py-2 text-sm font-medium bg-blue-500 text-white hover:bg-blue-600 transition"
+                      >
+                        Download
+                      </button>
+                    ) : (
+                      <button
+                        disabled={!canClaim || !canClaimImages || claiming === 'image1'}
+                        onClick={() => claim('image1')}
+                        className={`rounded-full px-4 py-2 text-sm font-medium transition
+                          ${!canClaim || !canClaimImages || claiming === 'image1'
+                            ? 'bg-white/10 opacity-60 cursor-not-allowed'
+                            : 'bg-white text-neutral-900 hover:opacity-90'}`}
+                      >
+                        {claiming === 'image1' ? 'Claiming…' : canClaimImages ? 'Claim Image' : 'Need 10+ songs'}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Exclusive Image 2 */}
+            <div className="bg-black/30 rounded-xl border border-white/10 overflow-hidden">
+              <div className="relative">
+                <img
+                  src="/image2.png"
+                  alt="Exclusive Image 2"
+                  className="w-full h-44 object-cover"
+                />
+                <span className="absolute top-3 left-3 rounded-full bg-white/10 backdrop-blur px-3 py-1 text-xs">
+                  Premium • Digital
+                </span>
+              </div>
+              <div className="p-4">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-semibold">Exclusive Image 2</h3>
+                  <span
+                    className={`ml-auto rounded-full px-2 py-0.5 text-xs ${
+                      claimedForArtist.image2
+                        ? 'bg-emerald-400/15 text-emerald-300'
+                        : 'bg-amber-400/15 text-amber-300'
+                    }`}
+                  >
+                    {claimedForArtist.image2 ? 'Claimed' : 'Unclaimed'}
+                  </span>
+                </div>
+                <p className="text-xs opacity-75 mt-1">
+                  Premium digital artwork. Perfect for social media or personal collection.
+                </p>
+
+                <div className="mt-3 flex items-center justify-between">
+                  <span className="text-emerald-300 font-semibold text-sm">Free • Requires 10+ liked songs</span>
+                  <div className="flex gap-2">
+                    {claimedForArtist.image2 ? (
+                      <button
+                        onClick={() => downloadImage('exclusive-image-2.png', '/image2.png')}
+                        className="rounded-full px-3 py-2 text-sm font-medium bg-blue-500 text-white hover:bg-blue-600 transition"
+                      >
+                        Download
+                      </button>
+                    ) : (
+                      <button
+                        disabled={!canClaim || !canClaimImages || claiming === 'image2'}
+                        onClick={() => claim('image2')}
+                        className={`rounded-full px-4 py-2 text-sm font-medium transition
+                          ${!canClaim || !canClaimImages || claiming === 'image2'
+                            ? 'bg-white/10 opacity-60 cursor-not-allowed'
+                            : 'bg-white text-neutral-900 hover:opacity-90'}`}
+                      >
+                        {claiming === 'image2' ? 'Claiming…' : canClaimImages ? 'Claim Image' : 'Need 10+ songs'}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Balance helper */}
+          {/* Requirements helper */}
           <p className="text-[11px] opacity-60 mt-4">
-            Perks are tied to your VibeCoin proof on World mainnet. Costs are deducted on claim. Balance and eligibility checks should be verified on-chain and stored to Filecoin.
+            All perks are completely free! Digital images require 10+ liked songs, while physical perks (poster, event pass) require artist selection. 
+            All perks are tied to your Spotify verification and can be downloaded after claiming.
           </p>
         </div>
 
