@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 
 interface SpotifyData {
   totalSongs: number;
@@ -14,6 +15,7 @@ interface UserSpotifyData {
 }
 
 export default function TopArtists() {
+  const { data: session } = useSession();
   const [userData, setUserData] = useState<UserSpotifyData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -23,8 +25,16 @@ export default function TopArtists() {
       setLoading(true);
       setError('');
       
-      const response = await fetch('/api/user-spotify-data');
+      // Get wallet address from session
+      const walletAddress = session?.user?.walletAddress || session?.user?.id || 'unknown';
+      
+      console.log('TopArtists Debug - Session:', session);
+      console.log('TopArtists Debug - Wallet Address:', walletAddress);
+      
+      const response = await fetch(`/api/user-spotify-data?wallet=${encodeURIComponent(walletAddress)}`);
       const result = await response.json();
+      
+      console.log('TopArtists Debug - API Response:', result);
       
       if (result.success) {
         setUserData(result.data);
@@ -39,8 +49,22 @@ export default function TopArtists() {
   };
 
   useEffect(() => {
-    fetchTopArtists();
-  }, []);
+    if (session) {
+      fetchTopArtists();
+    }
+  }, [session]);
+
+  if (!session) {
+    return (
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+          <div className="text-4xl mb-3">🔐</div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">Please Sign In</h3>
+          <p className="text-gray-600 mb-4">You need to be signed in to view your top artists.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

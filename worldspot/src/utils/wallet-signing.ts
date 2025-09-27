@@ -45,14 +45,31 @@ export async function signMessageWithWorldCoin(message: string): Promise<WalletS
  * Keep this as a backup option if MiniKit is not available
  */
 export async function signMessageWithBrowserWallet(message: string): Promise<WalletSigningData> {
-  if (typeof window === 'undefined' || !window.ethereum) {
+  if (!isWalletAvailable()) {
     throw new Error('MetaMask or compatible wallet not found');
   }
 
   try {
+    // Check if wallet is available and connected (with error handling)
+    let isConnected = false;
+    try {
+      isConnected = window.ethereum.isConnected ? window.ethereum.isConnected() : false;
+    } catch (connectionError) {
+      console.warn('Wallet connection check failed:', connectionError);
+      // Continue without connection check if it fails
+    }
+
+    if (!isConnected) {
+      console.log('Wallet not connected, attempting to connect...');
+    }
+
     // Request account access
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
     const account = accounts[0];
+
+    if (!account) {
+      throw new Error('No account found');
+    }
 
     // Sign the message
     const signature = await window.ethereum.request({
@@ -73,6 +90,28 @@ export async function signMessageWithBrowserWallet(message: string): Promise<Wal
 // Declare global window.ethereum for TypeScript
 declare global {
   interface Window {
-    ethereum?: any;
+    ethereum?: {
+      request: (args: { method: string; params?: any[] }) => Promise<any>;
+      isConnected?: () => boolean;
+      on?: (event: string, callback: (accounts: string[]) => void) => void;
+      removeListener?: (event: string, callback: (accounts: string[]) => void) => void;
+    };
+  }
+}
+
+/**
+ * Safely check if a wallet is available without triggering extension errors
+ */
+export function isWalletAvailable(): boolean {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  try {
+    return !!(window.ethereum && typeof window.ethereum.request === 'function');
+  } catch (error) {
+    // Silently catch any extension errors
+    console.warn('Wallet availability check failed:', error);
+    return false;
   }
 }

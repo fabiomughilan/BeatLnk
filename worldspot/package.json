@@ -10,7 +10,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "socket": "node server.js"
   },
   "dependencies": {
     "@lighthouse-web3/sdk": "^0.4.2",
@@ -19,11 +20,15 @@
     "@worldcoin/minikit-js": "latest",
     "@worldcoin/minikit-react": "latest",
     "clsx": "^2.1.1",
+    "framer-motion": "^12.23.22",
     "iconoir-react": "^7.11.0",
     "next": "^15.5.4",
     "next-auth": "^5.0.0-beta.25",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "socket": "^1.1.23",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "tailwind-merge": "^3.2.0",
     "viem": "2.23.5"
   },

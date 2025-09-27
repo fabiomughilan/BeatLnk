@@ -45,7 +45,7 @@ export default function ProofRetriever() {
       setLoading(true);
       setError('');
       
-      const response = await fetch(` https://61923ee034bd.ngrok-free.app/api/retrieve-proof?hash=${encodeURIComponent(ipfsHash)}`);
+      const response = await fetch(` https://bok-embowed-season.ngrok-free.dev/api/retrieve-proof?hash=${encodeURIComponent(ipfsHash)}`);
       const result = await response.json();
 
       if (result.success) {
