@@ -20,26 +20,35 @@ export default function ArtistDashboard() {
     const fetchArtistAnalysis = async () => {
         try {
             setLoading(true);
-            // This would typically fetch from your API endpoint
-            // For now, we'll simulate the data structure
-            const mockData: ArtistAnalysis = {
-                topArtist: {
-                    name: "A.R. Rahman",
-                    count: 4
+            // Fetch from IPNS-based endpoint
+            const response = await fetch('https://82f141aa390b.ngrok-free.app/api/user-spotify-data', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
                 },
-                allArtists: {
-                    "A.R. Rahman": 4,
-                    "Dua Lipa": 2,
-                    "Selena Gomez": 2,
-                    "Anirudh Ravichander": 2,
-                    "Chinmayi": 2
-                },
-                totalSongs: 8,
-                nftEligible: false
-            };
-            setArtistAnalysis(mockData);
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch artist analysis from IPNS');
+            }
+
+            const result = await response.json();
+            
+            if (result.success) {
+                // Transform IPNS data to match component interface
+                const ipnsData = result.data;
+                setArtistAnalysis({
+                    topArtist: ipnsData.spotifyData.topArtist,
+                    allArtists: ipnsData.spotifyData.allArtists,
+                    totalSongs: ipnsData.spotifyData.totalSongs,
+                    nftEligible: ipnsData.nftStatus.hasEligibleNFTs
+                });
+            } else {
+                setArtistAnalysis(null);
+            }
         } catch (error) {
-            console.error('Error fetching artist analysis:', error);
+            console.error('Error fetching artist analysis from IPNS:', error);
+            setArtistAnalysis(null);
         } finally {
             setLoading(false);
         }
@@ -78,33 +87,82 @@ export default function ArtistDashboard() {
                 </p>
             </div>
 
-            {/* Top Artist Card */}
-            {artistAnalysis.topArtist && (
-                <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-blue-500">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-4">🏆 Your Top Artist</h2>
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h3 className="text-3xl font-bold text-blue-600">{artistAnalysis.topArtist.name}</h3>
-                            <p className="text-gray-600 text-lg">
-                                {artistAnalysis.topArtist.count} song{artistAnalysis.topArtist.count !== 1 ? 's' : ''} in your library
-                            </p>
-                        </div>
-                        <div className="text-right">
-                            <div className={`px-4 py-2 rounded-full text-sm font-semibold ${artistAnalysis.nftEligible
-                                    ? 'bg-green-100 text-green-800'
-                                    : 'bg-yellow-100 text-yellow-800'
-                                }`}>
-                                {artistAnalysis.nftEligible ? '🎉 NFT Eligible!' : 'Need 10+ songs for NFT'}
-                            </div>
-                            {!artistAnalysis.nftEligible && (
-                                <p className="text-sm text-gray-500 mt-1">
-                                    {10 - artistAnalysis.topArtist.count} more songs needed
-                                </p>
-                            )}
-                        </div>
-                    </div>
+      {/* Top 2 Artists Cards */}
+      {sortedArtists.length > 0 && (
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">🏆 Your Top Artists</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {sortedArtists.slice(0, 2).map(([artist, count], index) => (
+              <div key={artist} className={`relative p-6 rounded-xl border-2 ${
+                index === 0 
+                  ? 'border-yellow-300 bg-gradient-to-br from-yellow-50 to-orange-50' 
+                  : 'border-gray-300 bg-gradient-to-br from-gray-50 to-blue-50'
+              }`}>
+                {/* Rank Badge */}
+                <div className={`absolute -top-3 -left-3 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg ${
+                  index === 0 ? 'bg-yellow-500' : 'bg-gray-400'
+                }`}>
+                  {index + 1}
                 </div>
-            )}
+                
+                {/* Crown for #1 */}
+                {index === 0 && (
+                  <div className="absolute -top-2 -right-2">
+                    <span className="text-2xl">👑</span>
+                  </div>
+                )}
+                
+                {/* Artist Info */}
+                <div className="pt-4">
+                  <h3 className={`text-2xl font-bold mb-2 ${
+                    index === 0 ? 'text-yellow-800' : 'text-gray-800'
+                  }`}>
+                    {artist}
+                  </h3>
+                  
+                  <p className="text-gray-600 text-lg mb-4">
+                    {count} song{count !== 1 ? 's' : ''} in your library
+                  </p>
+                  
+                  {/* Progress Bar */}
+                  <div className="mb-4">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-sm text-gray-600">Progress to NFT</span>
+                      <span className="text-sm font-medium">{Math.min(count, 10)}/10</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-3">
+                      <div 
+                        className={`h-3 rounded-full transition-all duration-300 ${
+                          index === 0 ? 'bg-yellow-500' : 'bg-gray-400'
+                        }`}
+                        style={{ width: `${Math.min((count / 10) * 100, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  
+                  {/* NFT Status */}
+                  <div className={`px-4 py-2 rounded-full text-sm font-semibold text-center ${
+                    count >= 10 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {count >= 10 ? '🎉 NFT Ready!' : `${10 - count} more songs for NFT`}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {/* Show message if only 1 artist */}
+          {sortedArtists.length === 1 && (
+            <div className="mt-6 p-4 bg-blue-50 rounded-lg text-center">
+              <p className="text-blue-700">
+                🎵 Add more artists to your library to see your top 2!
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
             {/* All Artists List */}
             <div className="bg-white rounded-lg shadow-lg p-6">

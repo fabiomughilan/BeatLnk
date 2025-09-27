@@ -68,45 +68,8 @@ function Reclaim() {
           setProofs(proofs);
           setIsLoading(false);
 
-          // Check VibeCoin minting status from proof response
-          if (proofs.vibeCoin) {
-            if (proofs.vibeCoin.shouldMint && proofs.vibeCoin.mintTransaction) {
-              // Execute VibeCoin mint transaction using WorldCoin MiniKit
-              setVibeCoinStatus('🔄 Processing VibeCoin mint...');
-              try {
-                console.log('🔄 Sending VibeCoin mint transaction via WorldCoin MiniKit');
-                console.log('Transaction details:', {
-                  to: proofs.vibeCoin.mintTransaction.to,
-                  value: proofs.vibeCoin.mintTransaction.value,
-                  data: proofs.vibeCoin.mintTransaction.data.slice(0, 20) + '...'
-                });
-
-                const mintResult = await MiniKit.commandsAsync.sendTransaction({
-                  transaction: [
-                    {
-                      address: proofs.vibeCoin.mintTransaction.to,
-                      value: proofs.vibeCoin.mintTransaction.value,
-                      calldata: proofs.vibeCoin.mintTransaction.data
-                    }
-                  ]
-                });
-
-                if (mintResult?.finalPayload?.status === 'success') {
-                  setVibeCoinStatus(`🪙 Earned 10 VibeCoin! ${proofs.vibeCoin.reason}`);
-                  setMintTxHash(mintResult.finalPayload.transaction_id);
-                } else {
-                  setVibeCoinStatus(`❌ VibeCoin minting failed: ${mintResult?.finalPayload?.error_code || 'Unknown error'}`);
-                }
-              } catch (mintError) {
-                console.error('VibeCoin minting error:', mintError);
-                setVibeCoinStatus(`❌ VibeCoin minting failed`);
-              }
-            } else if (!proofs.vibeCoin.shouldMint) {
-              setVibeCoinStatus(`⏭️ ${proofs.vibeCoin.reason}`);
-            } else {
-              setVibeCoinStatus(`❌ VibeCoin minting preparation failed`);
-            }
-          }
+          // Check VibeCoin minting status after proof verification
+          await checkAndExecuteVibeCoinMint();
 
           // Automatically upload to Lighthouse after successful verification
           await uploadToLighthouse(proofs);

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import lighthouse from '@lighthouse-web3/sdk';
+import { storeIpfsHash } from '@/utils/artistDataStore';
 
 export async function POST(req: NextRequest) {
   try {
@@ -29,6 +30,9 @@ export async function POST(req: NextRequest) {
     );
 
     if (response.data) {
+      // Store the IPFS hash for later retrieval
+      storeIpfsHash(response.data.Hash);
+      
       return NextResponse.json({
         success: true,
         hash: response.data.Hash,
