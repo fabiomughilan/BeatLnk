@@ -1,45 +1,10 @@
-'use client';
-
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { useEffect, useState } from "react";
 
-export default function Wallet() {
-  const [session, setSession] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const sessionData = await auth();
-        setSession(sessionData);
-        if (!sessionData) {
-          redirect("/");
-        }
-      } catch (error) {
-        console.error('Auth error:', error);
-        redirect("/");
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    checkAuth();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-neutral-950 text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
-          <p>Loading wallet...</p>
-        </div>
-      </div>
-    );
-  }
-
+export default async function Wallet() {
+  const session = await auth();
   if (!session) {
-    return null; // Will redirect
+    redirect("/");
   }
 
   // TODO: Replace with real on-chain fetch for balance + tx history

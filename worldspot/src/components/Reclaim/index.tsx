@@ -62,11 +62,11 @@ function Reclaim() {
       await reclaimProofRequest.startSession({
         onSuccess: async (proofs) => {
           console.log('Successfully created proof', proofs);
-          setProofs(proofs as unknown as Record<string, unknown>);
+          setProofs(proofs as Record<string, unknown>);
           setIsLoading(false);
 
           // Upload to Lighthouse
-          await uploadToLighthouse(proofs as unknown as Record<string, unknown>);
+          await uploadToLighthouse(proofs as Record<string, unknown>);
         },
         onError: (error) => {
           console.error('Verification failed', error);
