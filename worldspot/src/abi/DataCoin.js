@@ -1,4 +1,4 @@
-const DataCoinABI = [
+module.exports = [
   {
     inputs: [],
     stateMutability: "nonpayable",
@@ -1342,7 +1342,3 @@ const DataCoinABI = [
     type: "function",
   },
 ];
-
-// Support both CommonJS and ES modules
-module.exports = DataCoinABI;
-export default DataCoinABI;

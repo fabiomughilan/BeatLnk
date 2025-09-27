@@ -21,11 +21,7 @@ export default function ArtistDashboard() {
         try {
             setLoading(true);
             // Fetch from IPNS-based endpoint
-<<<<<<< HEAD
             const response = await fetch(' https://97b4ca846410.ngrok-free.app/api/user-spotify-data', {
-=======
-            const response = await fetch('https://82f141aa390b.ngrok-free.app/api/user-spotify-data', {
->>>>>>> parent of a7acd92 (changes)
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
