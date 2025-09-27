@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { getArtistAnalysis } from "@/utils/artistDataStore";
 
-export async function GET() {
+export async function GET(_req: NextRequest) {
   try {
     const session = await auth();
     

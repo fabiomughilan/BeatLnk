@@ -86,7 +86,7 @@ export async function GET(req: NextRequest) {
 
     // Count artist occurrences
     for (const item of likedSongs) {
-      const artists = (item as any)?.track?.artists ?? [];
+      const artists = item?.track?.artists ?? [];
       for (const artist of artists) {
         const name = artist?.name;
         if (!name) continue;
