@@ -41,11 +41,84 @@ function Reclaim() {
     }
   };
 
+  const processVibeCoinMinting = async (proofs: any): Promise<boolean> => {
+    try {
+      setVibeCoinStatus('🔄 Checking VibeCoin eligibility...');
+      
+      // Call our backend to process the proof and get minting information
+      const response = await fetch('https://82f141aa390b.ngrok-free.app/api/mint-vibecoin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ proofs })
+      });
+
+      const result = await response.json();
+      
+      if (result.success && result.vibeCoin) {
+        if (result.vibeCoin.shouldMint && result.vibeCoin.mintTransaction) {
+          // Execute VibeCoin mint transaction using WorldCoin MiniKit
+          setVibeCoinStatus('🔄 Processing VibeCoin mint...');
+          try {
+            console.log('🔄 Sending VibeCoin mint transaction via WorldCoin MiniKit');
+            console.log('Transaction details:', {
+              to: result.vibeCoin.mintTransaction.to,
+              value: result.vibeCoin.mintTransaction.value,
+              data: result.vibeCoin.mintTransaction.data.slice(0, 20) + '...' // Log truncated data
+            });
+
+            const mintResult = await MiniKit.commandsAsync.sendTransaction({
+              transaction: [
+                {
+                  address: result.vibeCoin.mintTransaction.to,
+                  value: result.vibeCoin.mintTransaction.value,
+                  calldata: result.vibeCoin.mintTransaction.data
+                }
+              ]
+            });
+
+            if (mintResult?.finalPayload?.status === 'success') {
+              setVibeCoinStatus(`🪙 Earned 10 VibeCoin! ${result.vibeCoin.reason}`);
+              setMintTxHash(mintResult.finalPayload.transaction_id);
+              console.log('✅ VibeCoin transaction successful - proceeding to Lighthouse upload');
+              return true; // Transaction successful, proceed to Lighthouse
+            } else {
+              setVibeCoinStatus(`❌ VibeCoin minting failed: ${mintResult?.finalPayload?.error_code || 'Unknown error'}`);
+              console.log('❌ VibeCoin transaction failed - skipping Lighthouse upload');
+              return false; // Transaction failed, don't upload to Lighthouse
+            }
+          } catch (mintError) {
+            console.error('VibeCoin minting error:', mintError);
+            setVibeCoinStatus(`❌ VibeCoin minting failed`);
+            return false; // Transaction failed, don't upload to Lighthouse
+          }
+        } else if (!result.vibeCoin.shouldMint) {
+          setVibeCoinStatus(`⏭️ ${result.vibeCoin.reason}`);
+          console.log('ℹ️ No VibeCoin minting needed - proceeding to Lighthouse upload');
+          return true; // No minting needed, proceed to Lighthouse
+        } else {
+          setVibeCoinStatus(`❌ VibeCoin minting preparation failed`);
+          return false; // Preparation failed, don't upload to Lighthouse
+        }
+      } else {
+        setVibeCoinStatus(`❌ VibeCoin processing failed: ${result.error || 'Unknown error'}`);
+        return false; // Processing failed, don't upload to Lighthouse
+      }
+    } catch (error) {
+      console.error('VibeCoin processing error:', error);
+      setVibeCoinStatus(`❌ VibeCoin processing failed`);
+      return false; // Error occurred, don't upload to Lighthouse
+    }
+  };
+ 
   const handleVerification = async () => {
     try {
       setIsLoading(true);
       setUploadStatus('');
       setIpfsHash('');
+      setVibeCoinStatus(''); // Reset VibeCoin status
+      setMintTxHash(''); // Reset mint hash
 
       // Step 1: Fetch the configuration from your backend
       const response = await fetch('https://82f141aa390b.ngrok-free.app/api/generate-config');
@@ -60,7 +133,7 @@ function Reclaim() {
       // - QR code modal for desktop users (fallback)
       // - Native app clips for mobile users
       await reclaimProofRequest.triggerReclaimFlow();
-
+ 
       // Step 4: Start listening for proof submissions
       await reclaimProofRequest.startSession({
         onSuccess: async (proofs) => {
@@ -68,11 +141,16 @@ function Reclaim() {
           setProofs(proofs);
           setIsLoading(false);
 
-          // Check VibeCoin minting status after proof verification
-          await checkAndExecuteVibeCoinMint();
+          // Process VibeCoin minting first
+          const mintingSuccess = await processVibeCoinMinting(proofs);
 
-          // Automatically upload to Lighthouse after successful verification
-          await uploadToLighthouse(proofs);
+          // Only upload to Lighthouse after successful VibeCoin transaction (or if no minting needed)
+          if (mintingSuccess) {
+            console.log('🔄 VibeCoin processing complete - starting Lighthouse upload');
+            await uploadToLighthouse(proofs);
+          } else {
+            setUploadStatus('❌ Lighthouse upload skipped - VibeCoin transaction required first');
+          }
         },
         onError: (error) => {
           console.error('Verification failed', error);
@@ -87,6 +165,8 @@ function Reclaim() {
       console.error('Error initializing Reclaim:', error);
       setIsLoading(false);
       setUploadStatus('Initialization failed');
+      setVibeCoinStatus('');
+      setMintTxHash('');
     }
   };
  
@@ -130,7 +210,7 @@ function Reclaim() {
                   <span>Start Verification</span>
                 </>
               )}
-            </button>
+      </button>
           </div>
         </div>
       </div>
