@@ -73,6 +73,8 @@ export async function signMessageWithBrowserWallet(message: string): Promise<Wal
 // Declare global window.ethereum for TypeScript
 declare global {
   interface Window {
-    ethereum?: any;
+    ethereum?: {
+      request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
+    };
   }
 }
