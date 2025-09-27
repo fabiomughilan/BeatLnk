@@ -21,7 +21,7 @@ export default function ArtistDashboard() {
         try {
             setLoading(true);
             // Fetch from IPNS-based endpoint
-            const response = await fetch(' https://97b4ca846410.ngrok-free.app/api/user-spotify-data', {
+            const response = await fetch(' https://61923ee034bd.ngrok-free.app/api/user-spotify-data', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -207,7 +207,7 @@ export default function ArtistDashboard() {
             <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-lg p-6">
                 <h3 className="text-xl font-bold mb-2">🎨 NFT Collection</h3>
                 <p className="text-yellow-100">
-                    When you have 10+ songs from the same artist, you&apos;ll automatically receive a custom NFT
+                    When you have 10+ songs from the same artist, you'll automatically receive a custom NFT
                     featuring that artist! Keep listening to unlock exclusive digital collectibles.
                 </p>
             </div>

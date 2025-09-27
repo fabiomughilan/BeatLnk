@@ -3,20 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function DebugPanel() {
-  const [debugData, setDebugData] = useState<{
-    error?: string;
-    debug?: {
-      session: {
-        walletAddress: string;
-        user?: { id: string; username?: string };
-      };
-      dataSources: {
-        inMemory: { available: boolean; data?: { topArtist?: { name: string }; totalSongs: number } };
-        ipfsHash: { available: boolean; hash?: string };
-        ipns: { available: boolean; count: number; data?: { addedAt: string }[] };
-      };
-    };
-  } | null>(null);
+  const [debugData, setDebugData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const router = useRouter();
@@ -24,7 +11,7 @@ export default function DebugPanel() {
   const fetchDebugData = async () => {
     try {
       setLoading(true);
-      const response = await fetch(' https://97b4ca846410.ngrok-free.app/api/debug-data');
+      const response = await fetch(' https://61923ee034bd.ngrok-free.app/api/debug-data');
       const result = await response.json();
       setDebugData(result);
     } catch (error) {
@@ -38,7 +25,7 @@ export default function DebugPanel() {
   const syncWalletData = async () => {
     try {
       setSyncing(true);
-      const response = await fetch(' https://97b4ca846410.ngrok-free.app/api/sync-wallet-data', {
+      const response = await fetch(' https://61923ee034bd.ngrok-free.app/api/sync-wallet-data', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -155,7 +142,7 @@ export default function DebugPanel() {
               <div className="ml-5 text-xs text-gray-300 mt-1">
                 <p>Proofs Count: {debugData.debug.dataSources.ipns.count}</p>
                 {debugData.debug.dataSources.ipns.available && (
-                  <p>Latest: {debugData.debug.dataSources.ipns.data && debugData.debug.dataSources.ipns.data.length > 0 ? new Date(debugData.debug.dataSources.ipns.data[debugData.debug.dataSources.ipns.data.length - 1]?.addedAt).toLocaleString() : 'No data'}</p>
+                  <p>Latest: {new Date(debugData.debug.dataSources.ipns.data[debugData.debug.dataSources.ipns.data.length - 1]?.addedAt).toLocaleString()}</p>
                 )}
               </div>
             </div>
@@ -178,7 +165,7 @@ export default function DebugPanel() {
               )}
               {debugData.debug.dataSources.inMemory.available && !debugData.debug.dataSources.ipns.available && (
                 <div className="space-y-2">
-                  <p>• ✅ In-memory data available! Click &quot;Sync Data&quot; to store in IPNS with correct wallet address.</p>
+                  <p>• ✅ In-memory data available! Click "Sync Data" to store in IPNS with correct wallet address.</p>
                   <p className="text-xs text-blue-300">Current wallet: {debugData.debug.session.walletAddress}</p>
                 </div>
               )}

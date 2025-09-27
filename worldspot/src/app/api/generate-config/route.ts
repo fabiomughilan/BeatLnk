@@ -2,7 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ReclaimProofRequest } from '@reclaimprotocol/js-sdk';
 import { auth } from '@/auth';
 
+<<<<<<< HEAD
+export async function GET(req: NextRequest) {
+=======
 export async function GET(_req: NextRequest) {
+>>>>>>> parent of 68c4cd4 (vercel1)
   try {
     // Get current session to include wallet address
     const session = await auth();
@@ -22,7 +26,7 @@ export async function GET(_req: NextRequest) {
     const reclaimProofRequest = await ReclaimProofRequest.init(APP_ID, APP_SECRET, PROVIDER_ID);
     
     // Set the callback URL with wallet address as query parameter
-    const BASE_URL = 'https://97b4ca846410.ngrok-free.app';
+    const BASE_URL = 'https://61923ee034bd.ngrok-free.app';
     const callbackUrl = `${BASE_URL}/api/receive-proofs?wallet=${encodeURIComponent(walletAddress)}`;
     reclaimProofRequest.setAppCallbackUrl(callbackUrl);
     

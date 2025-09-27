@@ -3,12 +3,12 @@ import { useState } from 'react';
 import { ReclaimProofRequest } from '@reclaimprotocol/js-sdk';
  
 function Reclaim() {
-  const [proofs, setProofs] = useState<Record<string, unknown> | null>(null);
+  const [proofs, setProofs] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<string>('');
   const [ipfsHash, setIpfsHash] = useState<string>('');
  
-  const uploadToLighthouse = async (proofs: Record<string, unknown>) => {
+  const uploadToLighthouse = async (proofs: any) => {
     try {
       setUploadStatus('Uploading to Lighthouse...');
       
@@ -62,11 +62,11 @@ function Reclaim() {
       await reclaimProofRequest.startSession({
         onSuccess: async (proofs) => {
           console.log('Successfully created proof', proofs);
-          setProofs(proofs as Record<string, unknown>);
+          setProofs(proofs);
           setIsLoading(false);
 
           // Upload to Lighthouse
-          await uploadToLighthouse(proofs as Record<string, unknown>);
+          await uploadToLighthouse(proofs);
         },
         onError: (error) => {
           console.error('Verification failed', error);

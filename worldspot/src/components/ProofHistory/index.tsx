@@ -11,17 +11,8 @@ interface ProofHistory {
 interface UserProofsData {
   userId: string;
   totalProofs: number;
-  latestProof: {
-    timestamp: number;
-    provider: string;
-    publicData?: { liked_songs?: unknown[] };
-  } | null;
-  latestAnalysis: {
-    topArtist?: { name: string; count: number };
-    totalSongs: number;
-    nftEligible: boolean;
-    allArtists: Record<string, number>;
-  } | null;
+  latestProof: any;
+  latestAnalysis: any;
   allProofs: ProofHistory[];
 }
 
@@ -35,7 +26,7 @@ export default function ProofHistory() {
       setLoading(true);
       setError('');
       
-      const response = await fetch(' https://97b4ca846410.ngrok-free.app/api/user-proofs');
+      const response = await fetch(' https://61923ee034bd.ngrok-free.app/api/user-proofs');
       
       if (response.ok) {
         const result = await response.json();
@@ -54,7 +45,7 @@ export default function ProofHistory() {
         allProofs: []
       });
       
-    } catch (_err) {
+    } catch (err) {
       // Show empty state on error
       setProofsData({
         userId: 'unknown',
@@ -113,10 +104,10 @@ export default function ProofHistory() {
           </div>
           <h3 className="text-xl font-semibold text-yellow-800 mb-2">No Verification History</h3>
           <p className="text-yellow-700 mb-4">
-            You haven&apos;t verified your Spotify account yet. Start your verification journey to see your music data here!
+            You haven't verified your Spotify account yet. Start your verification journey to see your music data here!
           </p>
           <p className="text-sm text-yellow-600">
-            Go to the Home page and click &quot;Start Verification&quot; to begin.
+            Go to the Home page and click "Start Verification" to begin.
           </p>
         </div>
       </div>

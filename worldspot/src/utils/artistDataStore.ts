@@ -1,15 +1,8 @@
 // Simple in-memory store to capture artist analysis from console logs
-interface ArtistAnalysis {
-  topArtist: { name: string; count: number };
-  totalSongs: number;
-  nftEligible: boolean;
-  allArtists: Record<string, number>;
-}
-
-let storedArtistAnalysis: ArtistAnalysis | null = null;
+let storedArtistAnalysis: any = null;
 let storedIpfsHash: string | null = null;
 
-export function storeArtistAnalysis(analysis: ArtistAnalysis) {
+export function storeArtistAnalysis(analysis: any) {
   storedArtistAnalysis = analysis;
   console.log('📊 Artist analysis stored:', analysis);
 }
