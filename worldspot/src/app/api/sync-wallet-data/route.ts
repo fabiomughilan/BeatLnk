@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 import { updateUserProofs } from "@/utils/ipnsManager";
 import { getArtistAnalysis } from "@/utils/artistDataStore";
 
-export async function POST(req: NextRequest) {
+export async function POST(_req: NextRequest) {
   try {
     const session = await auth();
     

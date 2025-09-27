@@ -3,7 +3,7 @@ import { verifyProof } from "@reclaimprotocol/js-sdk";
 import util from "node:util";
 import { storeArtistAnalysis } from "@/utils/artistDataStore";
 import { updateUserProofs, getLatestUserProof } from "@/utils/ipnsManager";
-import { auth } from "@/auth";
+// import { auth } from "@/auth";
 
 export async function POST(req: NextRequest) {
   try {
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
       topArtist: topArtist ? {
         name: topArtist[0],
         count: topArtist[1]
-      } : null,
+      } : { name: 'No artist', count: 0 },
       allArtists: artistCount,
       totalSongs: liked.length,
       nftEligible: topArtist ? topArtist[1] >= 10 : false
@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
 
     // Store proof for persistent storage and history
     // Use wallet address from query parameter (most reliable)
-    let walletAddress = queryWallet || `wallet_${Date.now()}`;
+    const walletAddress = queryWallet || `wallet_${Date.now()}`;
     
     
     // Add wallet address to proof context for IPNS lookup

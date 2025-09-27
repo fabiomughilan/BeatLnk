@@ -2,7 +2,14 @@
 import { useState } from 'react';
 
 interface SpotifyData {
-  likedSongs: any[];
+  likedSongs: {
+    track: {
+      name: string;
+      artists: { name: string }[];
+      album: { name: string };
+    };
+    added_at: string;
+  }[];
   totalSongs: number;
 }
 
@@ -26,7 +33,7 @@ interface ProofData {
   spotifyData: SpotifyData;
   userInfo: UserInfo;
   verification: Verification;
-  rawData: any;
+  rawData: Record<string, unknown>;
 }
 
 export default function ProofRetriever() {
@@ -45,7 +52,7 @@ export default function ProofRetriever() {
       setLoading(true);
       setError('');
       
-      const response = await fetch(` https://61923ee034bd.ngrok-free.app/api/retrieve-proof?hash=${encodeURIComponent(ipfsHash)}`);
+      const response = await fetch(` https://97b4ca846410.ngrok-free.app/api/retrieve-proof?hash=${encodeURIComponent(ipfsHash)}`);
       const result = await response.json();
 
       if (result.success) {
@@ -60,11 +67,11 @@ export default function ProofRetriever() {
     }
   };
 
-  const analyzeArtists = (likedSongs: any[]) => {
+  const analyzeArtists = (likedSongs: SpotifyData['likedSongs']) => {
     const artistCount: Record<string, number> = {};
     
     likedSongs.forEach(song => {
-      song.track?.artists?.forEach((artist: any) => {
+      song.track?.artists?.forEach((artist) => {
         if (artist.name) {
           artistCount[artist.name] = (artistCount[artist.name] || 0) + 1;
         }
@@ -225,7 +232,7 @@ export default function ProofRetriever() {
                   <div className="flex-1">
                     <p className="font-medium">{song.track?.name || 'Unknown Song'}</p>
                     <p className="text-sm text-gray-600">
-                      {song.track?.artists?.map((a: any) => a.name).join(', ') || 'Unknown Artist'}
+                      {song.track?.artists?.map((a) => a.name).join(', ') || 'Unknown Artist'}
                     </p>
                   </div>
                   <div className="text-sm text-gray-500">

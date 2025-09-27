@@ -30,7 +30,7 @@ export default function AutoProofFetcher() {
       setError('');
       
       // Fetch from IPNS-based endpoint
-      const response = await fetch(' https://61923ee034bd.ngrok-free.app/api/user-spotify-data');
+      const response = await fetch(' https://97b4ca846410.ngrok-free.app/api/user-spotify-data');
       
       if (response.ok) {
         const result = await response.json();
@@ -71,7 +71,7 @@ export default function AutoProofFetcher() {
         }
       });
       
-    } catch (err) {
+    } catch (_err) {
       // Show sample data on error
       setProofData({
         metadata: {
@@ -176,7 +176,7 @@ export default function AutoProofFetcher() {
                 Verify your Spotify account to see your music preferences and unlock exclusive NFTs!
               </p>
               <p className="text-sm text-yellow-600">
-                Go to the Home page and click "Start Verification" to begin.
+                Go to the Home page and click &quot;Start Verification&quot; to begin.
               </p>
             </div>
           )}
