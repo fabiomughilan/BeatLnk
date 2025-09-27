@@ -26,7 +26,7 @@ export default function ProofHistory() {
       setLoading(true);
       setError('');
       
-      const response = await fetch('https://82f141aa390b.ngrok-free.app/api/user-proofs');
+      const response = await fetch(' https://61923ee034bd.ngrok-free.app/api/user-proofs');
       
       if (response.ok) {
         const result = await response.json();

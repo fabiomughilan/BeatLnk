@@ -30,7 +30,7 @@ export default function AutoProofFetcher() {
       setError('');
       
       // Fetch from IPNS-based endpoint
-      const response = await fetch('https://82f141aa390b.ngrok-free.app/api/user-spotify-data');
+      const response = await fetch(' https://61923ee034bd.ngrok-free.app/api/user-spotify-data');
       
       if (response.ok) {
         const result = await response.json();
