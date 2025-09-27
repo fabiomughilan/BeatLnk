@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
     let allProofs;
     try {
       allProofs = await getUserProofs(walletAddress);
-    } catch {
+    } catch (_ipnsError) {
       allProofs = null;
     }
     
@@ -81,7 +81,7 @@ export async function GET(req: NextRequest) {
     const latestProof = allProofs[allProofs.length - 1];
     
     // Extract and analyze Spotify data from IPNS
-    const likedSongs = (latestProof as any)?.publicData?.liked_songs || [];
+    const likedSongs = latestProof?.publicData?.liked_songs || [];
     const artistCount: Record<string, number> = {};
 
     // Count artist occurrences
