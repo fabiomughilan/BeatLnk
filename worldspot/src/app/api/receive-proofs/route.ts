@@ -95,8 +95,8 @@ export async function POST(req: NextRequest) {
     };
     
     
-    // Get previous proof for comparison
-    const previousProof = await getLatestUserProof(walletAddress);
+    // Get previous proof for comparison (currently unused but kept for future features)
+    await getLatestUserProof(walletAddress);
     
     // Store proof in IPNS
     const ipnsResult = await updateUserProofs(walletAddress, enhancedProof);
