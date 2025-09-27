@@ -18,30 +18,20 @@ export async function GET(req: NextRequest) {
                          session.user?.id || 
                          'unknown';
 
-    console.log(`🔍 Looking for Spotify data for wallet: ${walletAddress}`);
-    console.log(`📋 Session user:`, { 
-      walletAddress: session.user?.walletAddress, 
-      id: session.user?.id,
-      username: session.user?.username 
-    });
 
     // Try to fetch user's proofs directly from IPNS first
     let allProofs;
     try {
       allProofs = await getUserProofs(walletAddress);
-      console.log(`📦 IPNS proofs found: ${allProofs?.length || 0}`);
     } catch (ipnsError) {
-      console.log(`⚠️ IPNS fetch failed:`, ipnsError);
       allProofs = null;
     }
     
     // If no IPNS data, try fallback to in-memory store
     if (!allProofs || allProofs.length === 0) {
-      console.log(`🔄 No IPNS data, trying in-memory store...`);
       const memoryData = getArtistAnalysis();
       
       if (memoryData) {
-        console.log(`✅ Found in-memory data:`, memoryData);
         // Convert in-memory data to IPNS-like format
         const sortedArtists = Object.entries(memoryData.allArtists)
           .sort(([,a], [,b]) => b - a);
@@ -135,10 +125,6 @@ export async function GET(req: NextRequest) {
       }
     };
 
-    console.log(`📊 Fetched Spotify data from IPNS for wallet: ${walletAddress}`);
-    console.log(`   Total Songs: ${likedSongs.length}`);
-    console.log(`   Top Artist: ${topArtist ? `${topArtist[0]} (${topArtist[1]} songs)` : 'None'}`);
-    console.log(`   Data Source: IPNS (${allProofs.length} verifications)`);
 
     return NextResponse.json({
       success: true,

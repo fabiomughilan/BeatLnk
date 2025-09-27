@@ -2,7 +2,6 @@ import ProofRetriever from "@/components/ProofRetriever";
 import AutoProofFetcher from "@/components/AutoProofFetcher";
 import ProofHistory from "@/components/ProofHistory";
 import IPNSDataViewer from "@/components/IPNSDataViewer";
-import DebugPanel from "@/components/DebugPanel";
 
 export default function Explore() {
     return (
@@ -34,11 +33,6 @@ export default function Explore() {
                 Explore Rooms
               </button>
             </div>
-          </div>
-
-          {/* Debug Panel */}
-          <div className="mb-8">
-            <DebugPanel />
           </div>
 
           {/* IPNS Data Viewer Section */}

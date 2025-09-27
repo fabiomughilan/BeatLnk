@@ -121,20 +121,14 @@ export async function updateUserProofs(walletAddress: string, newProof: any): Pr
 
 export async function getUserProofs(walletAddress: string): Promise<any[]> {
   try {
-    console.log(`🔍 Getting proofs for wallet: ${walletAddress}`);
-    
     // First, try to get from in-memory cache
     let keyInfo;
     if (userIpnsKeys[walletAddress]) {
-      console.log(`📋 Found wallet in memory cache`);
       keyInfo = await getUserIpnsKey(walletAddress);
     } else {
       // If not in memory, try to find it by scanning all IPNS keys
-      console.log(`🔄 Wallet not in memory, scanning all IPNS keys...`);
-      
       try {
         const allKeys = await lighthouse.getAllKeys(LIGHTHOUSE_API_KEY);
-        console.log(`📦 Found ${allKeys.data?.length || 0} total IPNS keys`);
         
         if (allKeys.data && allKeys.data.length > 0) {
           // Try each key to see if it contains data for our wallet
@@ -156,7 +150,6 @@ export async function getUserProofs(walletAddress: string): Promise<any[]> {
                 });
                 
                 if (hasMatchingWallet) {
-                  console.log(`✅ Found matching IPNS key: ${key.ipnsId}`);
                   // Cache it for future use
                   userIpnsKeys[walletAddress] = key.ipnsName;
                   keyInfo = { ipnsName: key.ipnsName, ipnsId: key.ipnsId };
@@ -165,31 +158,27 @@ export async function getUserProofs(walletAddress: string): Promise<any[]> {
               }
             } catch (testError) {
               // Skip this key and try the next one
-              console.log(`⚠️ Failed to test key ${key.ipnsId}:`, testError.message);
+              continue;
             }
           }
         }
       } catch (getAllError) {
-        console.log(`⚠️ Failed to get all keys:`, getAllError);
+        // Silently handle error
       }
     }
     
     if (!keyInfo) {
-      console.log(`❌ No IPNS key found for wallet: ${walletAddress}`);
       return [];
     }
     
     // Fetch from IPNS using Lighthouse gateway
-    console.log(`📡 Fetching from IPNS: ${keyInfo.ipnsId}`);
     const response = await fetch(`https://gateway.lighthouse.storage/ipns/${keyInfo.ipnsId}`);
     if (!response.ok) {
-      console.log(`❌ IPNS fetch failed with status: ${response.status}`);
       return [];
     }
     
     const proofData = await response.json();
     const result = Array.isArray(proofData) ? proofData : [proofData];
-    console.log(`✅ Retrieved ${result.length} proof(s) from IPNS`);
     
     return result;
     
