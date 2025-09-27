@@ -8,19 +8,15 @@ export default async function Wallet() {
     redirect("/");
   }
 
+  // TODO: Replace with real on-chain fetch for balance + tx history
+  const balance = 1250;
+  const transactions = [
+    { id: 1, type: "Earned", amount: 250, date: "2025-09-15", desc: "Spotify verification" },
+    { id: 2, type: "Redeemed", amount: -50, date: "2025-09-20", desc: "Poster perk" },
+    { id: 3, type: "Earned", amount: 500, date: "2025-09-22", desc: "Artist like rewards" },
+  ];
+
   return (
-<<<<<<< HEAD
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center mb-8">💰 Vibe Coins Wallet</h1>
-        
-        <div className="max-w-2xl mx-auto space-y-6">
-          {/* Balance Card */}
-          <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-lg p-6">
-            <h2 className="text-2xl font-bold mb-2">Your Balance</h2>
-            <div className="text-4xl font-bold">1,250 Vibe Coins</div>
-            <p className="text-yellow-100 mt-2">Earned through music verification and NFT collection</p>
-=======
     <div className="min-h-screen bg-neutral-950 text-white">
       {/* Background */}
       <div
@@ -33,7 +29,7 @@ export default async function Wallet() {
           animation: "bgShift 18s ease-in-out infinite alternate",
         }}
       />
-      <style jsx global>{`
+      <style jsx>{`
         @keyframes bgShift {
           from { background-position: 0% 0%; }
           to   { background-position: 100% 100%; }
@@ -56,107 +52,38 @@ export default async function Wallet() {
             <button className="rounded-full bg-amber-400/20 text-amber-300 px-5 py-2 text-sm font-medium hover:bg-amber-400/30 transition">
               Redeem
             </button>
->>>>>>> parent of 68c4cd4 (vercel1)
-          </div>
-
-
-          {/* Leaderboard */}
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-xl font-bold mb-4">🏆 Top Vibe Coin Holders</h3>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 bg-gradient-to-r from-yellow-100 to-yellow-200 rounded-lg border-l-4 border-yellow-500">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold text-sm">1</div>
-                  <div>
-                    <p className="font-bold text-gray-800">MusicMaven</p>
-                    <p className="text-sm text-gray-600">@musicmaven.wallet</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-lg font-bold text-yellow-600">5,420</p>
-                  <p className="text-xs text-gray-500">Vibe Coins</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-100 to-gray-200 rounded-lg border-l-4 border-gray-400">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white font-bold text-sm">2</div>
-                  <div>
-                    <p className="font-bold text-gray-800">BeatCollector</p>
-                    <p className="text-sm text-gray-600">@beatcollector.wallet</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-lg font-bold text-gray-600">4,180</p>
-                  <p className="text-xs text-gray-500">Vibe Coins</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between p-3 bg-gradient-to-r from-orange-100 to-orange-200 rounded-lg border-l-4 border-orange-500">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-sm">3</div>
-                  <div>
-                    <p className="font-bold text-gray-800">VinylVibes</p>
-                    <p className="text-sm text-gray-600">@vinylvibes.wallet</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-lg font-bold text-orange-600">3,750</p>
-                  <p className="text-xs text-gray-500">Vibe Coins</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">4</div>
-                  <div>
-                    <p className="font-bold text-gray-800">MelodyMaster</p>
-                    <p className="text-sm text-gray-600">@melodymaster.wallet</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-lg font-bold text-blue-600">2,950</p>
-                  <p className="text-xs text-gray-500">Vibe Coins</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm">5</div>
-                  <div>
-                    <p className="font-bold text-gray-800">RhythmRider</p>
-                    <p className="text-sm text-gray-600">@rhythmrider.wallet</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-lg font-bold text-green-600">2,680</p>
-                  <p className="text-xs text-gray-500">Vibe Coins</p>
-                </div>
-              </div>
-              
-              {/* Current User Position */}
-              <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border-2 border-blue-200">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm">12</div>
-                  <div>
-                    <p className="font-bold text-blue-800">You</p>
-                    <p className="text-sm text-blue-600">{session.user?.username || 'Your Wallet'}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-lg font-bold text-blue-600">1,250</p>
-                  <p className="text-xs text-blue-500">Vibe Coins</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="mt-4 p-3 bg-gray-100 rounded-lg">
-              <p className="text-sm text-gray-600 text-center">
-                💡 <strong>Tip:</strong> Verify more music data and collect NFTs to climb the leaderboard!
-              </p>
-            </div>
           </div>
         </div>
+
+        {/* Transactions */}
+        <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-6">
+          <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
+          <div className="space-y-3">
+            {transactions.map((tx) => (
+              <div
+                key={tx.id}
+                className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 p-4"
+              >
+                <div>
+                  <div className="text-sm font-medium">{tx.desc}</div>
+                  <div className="text-xs opacity-70">{tx.date}</div>
+                </div>
+                <div
+                  className={`font-semibold ${
+                    tx.amount > 0 ? "text-emerald-300" : "text-red-300"
+                  }`}
+                >
+                  {tx.amount > 0 ? `+${tx.amount}` : tx.amount} VC
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Helper text */}
+        <p className="text-[11px] opacity-60 text-center mt-6">
+          VibeCoin balance and history are synced from World mainnet. Claims and redemptions are anchored on-chain and stored to Filecoin.
+        </p>
       </div>
     </div>
   );

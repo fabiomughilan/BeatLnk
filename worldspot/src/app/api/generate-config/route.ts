@@ -2,11 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ReclaimProofRequest } from '@reclaimprotocol/js-sdk';
 import { auth } from '@/auth';
 
-<<<<<<< HEAD
-export async function GET(req: NextRequest) {
-=======
-export async function GET(_req: NextRequest) {
->>>>>>> parent of 68c4cd4 (vercel1)
+export async function GET(request: NextRequest) {
   try {
     // Get current session to include wallet address
     const session = await auth();

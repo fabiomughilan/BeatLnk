@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
       if (memoryData) {
         // Convert in-memory data to IPNS-like format
         const sortedArtists = Object.entries(memoryData.allArtists)
-          .sort(([,a], [,b]) => b - a);
+          .sort(([,a], [,b]) => (b as number) - (a as number));
 
         const responseData = {
           walletAddress,
@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
             topArtist: memoryData.topArtist
           },
           nftStatus: {
-            eligibleArtists: sortedArtists.filter(([, count]) => count >= 10),
+            eligibleArtists: sortedArtists.filter(([, count]) => (count as number) >= 10),
             hasEligibleNFTs: memoryData.nftEligible
           },
           dataSource: {
@@ -81,22 +81,16 @@ export async function GET(req: NextRequest) {
     const latestProof = allProofs[allProofs.length - 1];
     
     // Extract and analyze Spotify data from IPNS
-<<<<<<< HEAD
-    const likedSongs = latestProof?.publicData?.liked_songs || [];
-=======
-    const likedSongs = (latestProof as any)?.publicData?.liked_songs || [];
->>>>>>> parent of 68c4cd4 (vercel1)
+    const likedSongs = (latestProof as Record<string, unknown>)?.publicData as Record<string, unknown> || {};
+    const songs = (likedSongs.liked_songs as unknown[]) || [];
     const artistCount: Record<string, number> = {};
 
     // Count artist occurrences
-    for (const item of likedSongs) {
-<<<<<<< HEAD
-      const artists = item?.track?.artists ?? [];
-=======
-      const artists = (item as any)?.track?.artists ?? [];
->>>>>>> parent of 68c4cd4 (vercel1)
+    for (const item of songs) {
+      const track = (item as Record<string, unknown>)?.track as Record<string, unknown> || {};
+      const artists = (track.artists as Record<string, unknown>[]) || [];
       for (const artist of artists) {
-        const name = artist?.name;
+        const name = (artist as Record<string, unknown>)?.name as string;
         if (!name) continue;
         artistCount[name] = (artistCount[name] || 0) + 1;
       }
@@ -116,7 +110,7 @@ export async function GET(req: NextRequest) {
       totalVerifications: allProofs.length,
       latestVerification: latestProof.addedAt,
       spotifyData: {
-        totalSongs: likedSongs.length,
+        totalSongs: songs.length,
         totalArtists: sortedArtists.length,
         allArtists: artistCount,
         top2Artists: top2Artists.map(([name, count]) => ({ name, count })),

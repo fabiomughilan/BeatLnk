@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getArtistAnalysis } from "@/utils/artistDataStore";
 
-<<<<<<< HEAD
-export async function GET(req: NextRequest) {
-=======
-export async function GET(_req: NextRequest) {
->>>>>>> parent of 68c4cd4 (vercel1)
+export async function GET() {
   try {
     const artistAnalysis = getArtistAnalysis();
     
