@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyProof } from "@reclaimprotocol/js-sdk";
 import util from "node:util";
+import { storeArtistAnalysis } from "@/utils/artistDataStore";
+import { updateUserProofs, getLatestUserProof } from "@/utils/ipnsManager";
+import { auth } from "@/auth";
+import { compareProofs, prepareMintTransaction, generateMintReason } from "@/utils/vibeCoinMinter";
 
 export async function POST(req: NextRequest) {
   try {
+    // Get wallet address from query parameters (passed from generate-config)
+    const { searchParams } = new URL(req.url);
+    const queryWallet = searchParams.get('wallet');
+
     // Get the raw body as text (URL-encoded proof object)
     const body = await req.text();
 
@@ -63,11 +71,76 @@ export async function POST(req: NextRequest) {
       nftEligible: topArtist ? topArtist[1] >= 10 : false
     };
 
+    // Store the analysis data for the dashboard to use
+    storeArtistAnalysis(artistAnalysis);
+
+    // Store proof for persistent storage and history
+    // Use wallet address from query parameter (most reliable)
+    let walletAddress = queryWallet || `wallet_${Date.now()}`;
+    
+    
+    // Add wallet address to proof context for IPNS lookup
+    const enhancedProof = {
+      ...proof,
+      claimData: {
+        ...proof.claimData,
+        context: JSON.stringify({
+          ...JSON.parse(proof.claimData?.context || '{}'),
+          extractedParameters: {
+            ...JSON.parse(proof.claimData?.context || '{}').extractedParameters,
+            walletAddress: walletAddress,
+            storedAt: new Date().toISOString()
+          }
+        })
+      }
+    };
+    
+    
+    // Get previous proof for comparison
+    const previousProof = await getLatestUserProof(walletAddress);
+    
+    // Compare current proof with previous one
+    const comparison = await compareProofs(enhancedProof, previousProof);
+    
+    console.log(`🔍 Proof comparison for ${walletAddress}:`);
+    console.log(`   Is new user: ${comparison.isNewUser}`);
+    console.log(`   Has changes: ${comparison.hasChanges}`);
+    console.log(`   Should mint: ${comparison.shouldMint}`);
+    if (comparison.changes.length > 0) {
+      console.log(`   Changes: ${comparison.changes.join(', ')}`);
+    }
+    
+    // Store proof in IPNS
+    const ipnsResult = await updateUserProofs(walletAddress, enhancedProof);
+    
+    // Prepare VibeCoin mint transaction if there are changes
+    let mintTransaction = null;
+    if (comparison.shouldMint) {
+      const mintReason = generateMintReason(comparison);
+      try {
+        mintTransaction = prepareMintTransaction(walletAddress);
+        console.log(`✅ VibeCoin mint transaction prepared for ${walletAddress}`);
+      } catch (mintError) {
+        console.error(`❌ Failed to prepare mint transaction:`, mintError);
+      }
+    } else {
+      console.log(`⏭️ No changes detected - skipping VibeCoin mint for ${walletAddress}`);
+    }
+
     return NextResponse.json({
       success: true,
       message: "Proof verified successfully",
       artistAnalysis,
-      proofData: proof,
+      proofData: enhancedProof,
+      ipnsId: ipnsResult.ipnsId,
+      gatewayUrl: ipnsResult.gatewayUrl,
+      walletAddress,
+      vibeCoin: {
+        shouldMint: comparison.shouldMint,
+        mintTransaction: mintTransaction,
+        reason: comparison.shouldMint ? generateMintReason(comparison) : 'No changes detected',
+        changes: comparison.changes
+      }
     });
   } catch (error) {
     console.error("Error processing proof:", error);

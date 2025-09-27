@@ -8,7 +8,6 @@ export async function GET(req: NextRequest) {
     const session = await auth();
     const walletAddress = session?.user?.walletAddress || session?.user?.id || 'unknown';
     
-    console.log(`🔧 Generating config for wallet: ${walletAddress}`);
 
     const APP_ID = process.env.NEXT_PUBLIC_APP_ID;
     const APP_SECRET = process.env.NEXT_PUBLIC_SECRET;
@@ -27,7 +26,6 @@ export async function GET(req: NextRequest) {
     const callbackUrl = `${BASE_URL}/api/receive-proofs?wallet=${encodeURIComponent(walletAddress)}`;
     reclaimProofRequest.setAppCallbackUrl(callbackUrl);
     
-    console.log(`🔗 Callback URL: ${callbackUrl}`);
     
     const reclaimProofRequestConfig = reclaimProofRequest.toJsonString();
 
