@@ -279,7 +279,7 @@ export default function ChatFlowPage() {
   const picked = (rid:string)=>{ setRoom(rid); localStorage.setItem(LS_KEY_ROOM,rid); setPhase("chat"); };
 
   return (
-    <div className="min-h-dvh relative bg-gradient-to-br from-neutral-950 via-slate-900/30 to-neutral-950 text-white pt-24">
+    <div className="min-h-dvh relative bg-gradient-to-br from-neutral-950 via-slate-900/30 to-neutral-950 text-white">
       <Background/>
       <AnimatePresence mode="wait">
         {phase==="name"  && <NameStep  key="name"  onNext={named} />}

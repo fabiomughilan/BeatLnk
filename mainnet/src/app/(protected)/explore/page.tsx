@@ -102,7 +102,7 @@ export default function Explore() {
       {/* Professional background */}
       <div className="absolute inset-0 bg-gradient-to-br from-neutral-950 via-slate-900/30 to-neutral-950"></div>
 
-      <div className="container mx-auto px-4 pt-24 pb-8 relative z-10">
+      <div className="container mx-auto px-4 py-8 relative z-10">
         <h1 className="text-3xl font-semibold text-center mb-8 text-white">Music Rewards</h1>
 
         {/* Liked Songs strip */}

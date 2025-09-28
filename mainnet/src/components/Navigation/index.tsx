@@ -59,11 +59,11 @@ export const Navigation = ({ walletBadge }: NavigationProps) => {
   return (
     <nav
       className="
-        fixed top-0 inset-x-0 z-[100]
+        fixed bottom-0 inset-x-0 z-50
         bg-black/90 backdrop-blur-xl
-        border-b border-white/10
+        border-t border-white/10
         px-4 py-2
-        pt-[max(env(safe-area-inset-top),16px)]
+        pb-[max(env(safe-area-inset-bottom),16px)]
       "
       role="navigation"
       aria-label="Primary navigation"

@@ -22,7 +22,22 @@ export default async function Home() {
         }}
       />
 
-      <Page.Main className="flex flex-col items-center justify-start gap-6 pt-24 pb-8">
+      <Page.Header className="p-0 sticky top-0 z-40 bg-black/80 backdrop-blur-xl border-b border-white/10">
+        <TopBar
+          title="Dashboard"
+          endAdornment={
+            <div className="flex items-center gap-3 pr-2">
+              <p className="text-sm font-medium text-white">{username}</p>
+              <Marble 
+                src="/image1.png" 
+                className="w-8 h-8" 
+              />
+            </div>
+          }
+        />
+      </Page.Header>
+
+      <Page.Main className="flex flex-col items-center justify-start gap-6 mb-20">
         {/* Hero / greeting */}
         <section className="w-full max-w-5xl pt-4">
           <div className="rounded-lg border border-white/10 bg-white/5 backdrop-blur-sm p-6">
