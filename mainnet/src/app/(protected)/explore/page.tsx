@@ -99,42 +99,48 @@ export default function Explore() {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white">
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center mb-8">Free Music Perks</h1>
+      {/* Professional background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-neutral-950 via-slate-900/30 to-neutral-950"></div>
+
+      <div className="container mx-auto px-4 pt-24 pb-8 relative z-10">
+        <h1 className="text-3xl font-semibold text-center mb-8 text-white">Music Rewards</h1>
 
         {/* Liked Songs strip */}
-        <div className="flex items-center justify-center mb-6">
-          <div className="inline-flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-4 py-2">
-            <span className="text-sm opacity-80">Your Liked Songs:</span>
-            <span className="font-bold text-lg">{likedSongsCount}</span>
+        <div className="flex items-center justify-center mb-8">
+          <div className="inline-flex items-center gap-4 bg-white/5 border border-white/10 rounded-lg px-6 py-3">
+            <span className="text-sm text-gray-300">Liked Songs:</span>
+            <span className="font-semibold text-lg text-blue-400">{likedSongsCount}</span>
             <button
               onClick={refreshLikedSongs}
-              className="text-sm rounded-full border border-white/15 px-3 py-1 hover:bg-white/5 transition"
+              className="text-sm rounded-md border border-white/15 px-3 py-1 hover:bg-white/5 transition-colors focus-ring"
               title="Refresh liked songs count"
             >
               Refresh
             </button>
           </div>
           {likedSongsCount > 10 && (
-            <div className="ml-4 inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/30 rounded-full px-3 py-1">
-              <span className="text-emerald-300 text-sm">✓ Eligible for digital perks</span>
+            <div className="ml-4 inline-flex items-center gap-2 bg-green-500/20 border border-green-500/30 rounded-lg px-3 py-1">
+              <span className="text-green-300 text-sm flex items-center gap-2">
+                <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                Eligible for digital rewards
+              </span>
             </div>
           )}
         </div>
 
         {/* Artist chooser + details */}
-        <div className="bg-white/5 border border-white/10 rounded-xl p-5 mb-8">
+        <div className="bg-white/5 border border-white/10 rounded-lg p-6 mb-8">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
-              <h2 className="text-xl font-semibold">Choose an Artist</h2>
-              <p className="text-sm opacity-75">
-                Select your favorite artist from your list to view and claim eligible perks.
+              <h2 className="text-xl font-semibold text-white">Select Artist</h2>
+              <p className="text-sm text-gray-300 mt-1">
+                Choose an artist to view and claim available rewards.
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <input
-                placeholder="Artist ID…"
-                className="rounded-lg bg-black/30 border border-white/15 px-3 py-2 text-sm outline-none"
+                placeholder="Artist ID"
+                className="rounded-md bg-black/30 border border-white/15 px-3 py-2 text-sm outline-none focus-ring"
                 value={selected?.id ?? ''}
                 onChange={(e) => setSelected({ id: e.target.value })}
               />
@@ -142,9 +148,9 @@ export default function Explore() {
                 onClick={() => {
                   if (selected?.id) router.push(`?artistId=${encodeURIComponent(selected.id)}`);
                 }}
-                className="rounded-lg bg-white text-neutral-900 text-sm px-3 py-2 font-medium hover:opacity-90 transition"
+                className="rounded-md bg-blue-600 text-white text-sm px-4 py-2 font-medium hover:bg-blue-700 transition-colors focus-ring"
               >
-                Set
+                Select
               </button>
             </div>
           </div>
@@ -158,22 +164,22 @@ export default function Explore() {
         </div>
 
         {/* Perks for the selected artist */}
-        <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <div className="bg-white/5 border border-white/10 rounded-lg p-6">
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold">{artistTitle}</h2>
-            {!selected && <p className="text-sm opacity-70 mt-1">Pick an artist above to view perks.</p>}
+            <h2 className="text-2xl font-semibold text-white">{artistTitle}</h2>
+            {!selected && <p className="text-sm text-gray-400 mt-1">Select an artist above to view rewards.</p>}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Limited-Edition Poster */}
-            <div className="bg-black/30 rounded-xl border border-white/10 overflow-hidden">
+            <div className="bg-black/30 rounded-lg border border-white/10 overflow-hidden">
               <div className="relative">
                 <img
                   src={selected?.image || 'https://picsum.photos/seed/poster/900/500'}
                   alt="Limited edition poster"
                   className="w-full h-44 object-cover"
                 />
-                <span className="absolute top-3 left-3 rounded-full bg-white/10 backdrop-blur px-3 py-1 text-xs">
+                <span className="absolute top-3 left-3 rounded-md bg-white/10 backdrop-blur px-3 py-1 text-xs">
                   Limited Edition • 1 / 250
                 </span>
               </div>
@@ -199,12 +205,17 @@ export default function Explore() {
                   <button
                     disabled={!canClaim || claimedForArtist.poster || claiming === 'poster'}
                     onClick={() => claim('poster')}
-                    className={`rounded-full px-4 py-2 text-sm font-medium transition
+                    className={`rounded-md px-4 py-2 text-sm font-medium transition-colors focus-ring
                       ${!canClaim || claimedForArtist.poster || claiming === 'poster'
-                        ? 'bg-white/10 opacity-60 cursor-not-allowed'
-                        : 'bg-white text-neutral-900 hover:opacity-90'}`}
+                        ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                        : 'bg-blue-600 text-white hover:bg-blue-700'}`}
                   >
-                    {claiming === 'poster' ? 'Claiming…' : claimedForArtist.poster ? 'Claimed' : 'Claim Poster'}
+                    {claiming === 'poster' ? (
+                      <span className="flex items-center gap-2">
+                        <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                        Processing...
+                      </span>
+                    ) : claimedForArtist.poster ? 'Claimed' : 'Claim Poster'}
                   </button>
                 </div>
               </div>
@@ -252,14 +263,14 @@ export default function Explore() {
             </div>
 
             {/* Exclusive Image 1 */}
-            <div className="bg-black/30 rounded-xl border border-white/10 overflow-hidden">
-              <div className="relative">
+            <div className="bg-black/30 rounded-xl border border-white/10 overflow-hidden hover-lift transition-all duration-300 hover-glow animate-scale-in" style={{ animationDelay: '0.1s' }}>
+              <div className="relative group">
                 <img
                   src="/image1.png"
                   alt="Exclusive Image 1"
-                  className="w-full h-44 object-cover"
+                  className="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
-                <span className="absolute top-3 left-3 rounded-full bg-white/10 backdrop-blur px-3 py-1 text-xs">
+                <span className="absolute top-3 left-3 rounded-full bg-white/10 backdrop-blur px-3 py-1 text-xs animate-pulse">
                   Exclusive • Digital
                 </span>
               </div>
@@ -286,7 +297,7 @@ export default function Explore() {
                     {claimedForArtist.image1 ? (
                       <button
                         onClick={() => downloadImage('exclusive-image-1.png', '/image1.png')}
-                        className="rounded-full px-3 py-2 text-sm font-medium bg-blue-500 text-white hover:bg-blue-600 transition"
+                        className="rounded-md px-3 py-2 text-sm font-medium bg-green-600 text-white hover:bg-green-700 transition-colors focus-ring"
                       >
                         Download
                       </button>
@@ -294,12 +305,17 @@ export default function Explore() {
                       <button
                         disabled={!canClaim || !canClaimImages || claiming === 'image1'}
                         onClick={() => claim('image1')}
-                        className={`rounded-full px-4 py-2 text-sm font-medium transition
+                        className={`rounded-md px-4 py-2 text-sm font-medium transition-colors focus-ring
                           ${!canClaim || !canClaimImages || claiming === 'image1'
-                            ? 'bg-white/10 opacity-60 cursor-not-allowed'
-                            : 'bg-white text-neutral-900 hover:opacity-90'}`}
+                            ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                            : 'bg-blue-600 text-white hover:bg-blue-700'}`}
                       >
-                        {claiming === 'image1' ? 'Claiming…' : canClaimImages ? 'Claim Image' : 'Need 10+ songs'}
+                        {claiming === 'image1' ? (
+                          <span className="flex items-center gap-2">
+                            <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                            Processing...
+                          </span>
+                        ) : canClaimImages ? 'Claim Image' : 'Need 10+ songs'}
                       </button>
                     )}
                   </div>
@@ -308,14 +324,14 @@ export default function Explore() {
             </div>
 
             {/* Exclusive Image 2 */}
-            <div className="bg-black/30 rounded-xl border border-white/10 overflow-hidden">
-              <div className="relative">
+            <div className="bg-black/30 rounded-xl border border-white/10 overflow-hidden hover-lift transition-all duration-300 hover-glow animate-scale-in" style={{ animationDelay: '0.2s' }}>
+              <div className="relative group">
                 <img
                   src="/image2.png"
                   alt="Exclusive Image 2"
-                  className="w-full h-44 object-cover"
+                  className="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
-                <span className="absolute top-3 left-3 rounded-full bg-white/10 backdrop-blur px-3 py-1 text-xs">
+                <span className="absolute top-3 left-3 rounded-full bg-white/10 backdrop-blur px-3 py-1 text-xs animate-pulse">
                   Premium • Digital
                 </span>
               </div>
@@ -342,20 +358,28 @@ export default function Explore() {
                     {claimedForArtist.image2 ? (
                       <button
                         onClick={() => downloadImage('exclusive-image-2.png', '/image2.png')}
-                        className="rounded-full px-3 py-2 text-sm font-medium bg-blue-500 text-white hover:bg-blue-600 transition"
+                        className="rounded-full px-3 py-2 text-sm font-medium bg-blue-500 text-white hover:bg-blue-600 transition-all duration-200 hover-scale focus-ring"
                       >
-                        Download
+                        <span className="flex items-center gap-2">
+                          <span>📥</span>
+                          Download
+                        </span>
                       </button>
                     ) : (
                       <button
                         disabled={!canClaim || !canClaimImages || claiming === 'image2'}
                         onClick={() => claim('image2')}
-                        className={`rounded-full px-4 py-2 text-sm font-medium transition
+                        className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 hover-scale focus-ring
                           ${!canClaim || !canClaimImages || claiming === 'image2'
                             ? 'bg-white/10 opacity-60 cursor-not-allowed'
-                            : 'bg-white text-neutral-900 hover:opacity-90'}`}
+                            : 'bg-white text-neutral-900 hover:opacity-90 hover-glow'}`}
                       >
-                        {claiming === 'image2' ? 'Claiming…' : canClaimImages ? 'Claim Image' : 'Need 10+ songs'}
+                        {claiming === 'image2' ? (
+                          <span className="flex items-center gap-2">
+                            <span className="w-3 h-3 border-2 border-neutral-900 border-t-transparent rounded-full animate-spin"></span>
+                            Claiming…
+                          </span>
+                        ) : canClaimImages ? 'Claim Image' : 'Need 10+ songs'}
                       </button>
                     )}
                   </div>

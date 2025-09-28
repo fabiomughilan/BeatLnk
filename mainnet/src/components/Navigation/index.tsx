@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useCallback } from 'react';
-import { TabItem, Tabs } from '@worldcoin/mini-apps-ui-kit-react';
-import { Home, User, Compass, Coins } from 'iconoir-react';
+import { Home, User, Compass, ChatBubble, Settings } from 'iconoir-react';
 import { useRouter, usePathname } from 'next/navigation';
 
 type NavigationProps = {
@@ -15,7 +14,7 @@ export const Navigation = ({ walletBadge }: NavigationProps) => {
 
   const current = useMemo(() => {
     if (pathname?.startsWith('/explore')) return 'explore';
-    if (pathname?.startsWith('/wallet')) return 'wallet';
+    if (pathname?.startsWith('/chat')) return 'chat';
     if (pathname?.startsWith('/profile')) return 'profile';
     return 'home';
   }, [pathname]);
@@ -24,7 +23,7 @@ export const Navigation = ({ walletBadge }: NavigationProps) => {
   useEffect(() => {
     router.prefetch?.('/home');
     router.prefetch?.('/explore');
-    router.prefetch?.('/wallet');
+    router.prefetch?.('/chat');
     router.prefetch?.('/profile');
   }, [router]);
 
@@ -39,8 +38,8 @@ export const Navigation = ({ walletBadge }: NavigationProps) => {
         case 'explore':
           router.push('/explore');
           break;
-        case 'wallet':
-          router.push('/wallet');
+        case 'chat':
+          router.push('/chat');
           break;
         case 'profile':
           router.push('/profile');
@@ -50,107 +49,64 @@ export const Navigation = ({ walletBadge }: NavigationProps) => {
     [current, router]
   );
 
+  const navItems = [
+    { id: 'home', label: 'Dashboard', icon: Home, path: '/home' },
+    { id: 'explore', label: 'Rewards', icon: Compass, path: '/explore' },
+    { id: 'chat', label: 'Community', icon: ChatBubble, path: '/chat' },
+    { id: 'profile', label: 'Profile', icon: User, path: '/profile' },
+  ];
+
   return (
-    <div
+    <nav
       className="
-        fixed bottom-0 inset-x-0 z-50
-        border-t border-white/10
-        bg-white/80 backdrop-blur-md
-        dark:bg-black/60
-        supports-[backdrop-filter]:bg-white/40
-        px-3
-        pb-[max(env(safe-area-inset-bottom),12px)]
-        pt-2
+        fixed top-0 inset-x-0 z-[100]
+        bg-black/90 backdrop-blur-xl
+        border-b border-white/10
+        px-4 py-2
+        pt-[max(env(safe-area-inset-top),16px)]
       "
       role="navigation"
-      aria-label="Primary"
+      aria-label="Primary navigation"
     >
-      <Tabs
-        value={current}
-        onValueChange={handleTabChange}
-        className="mx-auto max-w-xl"
-      >
-        <NavItem value="home" label="Home" active={current === 'home'}>
-          <Home strokeWidth={2} />
-        </NavItem>
-
-        <NavItem value="explore" label="Explore" active={current === 'explore'}>
-          <Compass strokeWidth={2} />
-        </NavItem>
-
-        <NavItem
-          value="wallet"
-          label="Vibe Coins"
-          active={current === 'wallet'}
-          badge={walletBadge}
-        >
-          <Coins strokeWidth={2} />
-        </NavItem>
-
-        <NavItem value="profile" label="Profile" active={current === 'profile'}>
-          <User strokeWidth={2} />
-        </NavItem>
-      </Tabs>
-    </div>
+      <div className="flex items-center justify-around max-w-md mx-auto">
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = current === item.id;
+          
+          return (
+            <button
+              key={item.id}
+              onClick={() => handleTabChange(item.id)}
+              className={`
+                flex flex-col items-center justify-center
+                px-3 py-2 rounded-lg
+                transition-all duration-200
+                focus:outline-none focus:ring-2 focus:ring-blue-500/50
+                ${isActive 
+                  ? 'bg-blue-600/20 text-blue-400' 
+                  : 'text-gray-400 hover:text-white hover:bg-white/5'
+                }
+              `}
+              aria-current={isActive ? 'page' : undefined}
+            >
+              <div className="relative">
+                <Icon 
+                  strokeWidth={isActive ? 2.5 : 2} 
+                  className={`transition-all duration-200 ${isActive ? 'scale-110' : ''}`}
+                />
+                {isActive && (
+                  <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-400 rounded-full" />
+                )}
+              </div>
+              <span className={`text-xs mt-1 font-medium transition-all duration-200 ${
+                isActive ? 'text-blue-400' : 'text-gray-400'
+              }`}>
+                {item.label}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </nav>
   );
 };
-
-/** Mini wrapper to add active pill + badge */
-function NavItem({
-  value,
-  label,
-  active,
-  children,
-  badge,
-}: {
-  value: string;
-  label: string;
-  active?: boolean;
-  children: React.ReactNode;
-  badge?: string | number;
-}) {
-  return (
-    <TabItem
-      value={value}
-      label={label}
-      icon={
-        <div className="relative">
-          <div
-            className={`
-              relative grid place-items-center h-10 w-10 rounded-full
-              transition-all
-              ${active
-                ? 'bg-black/5 dark:bg-white/10 shadow-[0_0_18px_rgba(56,189,248,0.35)]'
-                : 'bg-transparent'}
-            `}
-            aria-hidden
-          >
-            {children}
-            {active && (
-              <span
-                className="
-                  pointer-events-none absolute inset-0 rounded-full
-                  ring-1 ring-cyan-400/40
-                  motion-reduce:hidden
-                  animate-[pulse_2s_ease-in-out_infinite]
-                "
-              />
-            )}
-          </div>
-          {badge !== undefined && badge !== null && badge !== '' && (
-            <span
-              className="
-                absolute -top-1 -right-1 text-[10px] leading-[14px] px-1.5 rounded-full
-                bg-amber-500 text-white
-              "
-              aria-label={`${badge} ${label}`}
-            >
-              {String(badge)}
-            </span>
-          )}
-        </div>
-      }
-      aria-current={active ? 'page' : undefined}
-    />
-  );
-}

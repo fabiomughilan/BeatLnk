@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
 
     // Get optimal gas settings
     const feeData = await provider.getFeeData();
-    const gasPrice = feeData.gasPrice ? feeData.gasPrice * 150n / 100n : ethers.parseUnits("2", "gwei");
+    const gasPrice = feeData.gasPrice ? (feeData.gasPrice * BigInt(150)) / BigInt(100) : ethers.parseUnits("2", "gwei");
     
     console.log('Minting tokens:', {
       to: walletAddress,

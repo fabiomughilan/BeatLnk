@@ -15,7 +15,7 @@ export const UserInfo = () => {
 
   return (
     <div className="flex flex-row items-center justify-start gap-4 rounded-xl w-full border-2 border-gray-200 p-4">
-      <Marble src={session?.data?.user?.profilePictureUrl} className="w-14" />
+      <Marble src="/image1.png" className="w-14" />
       <div className="flex flex-row items-center justify-center">
         <span className="text-lg font-semibold capitalize">
           {session?.data?.user?.username}

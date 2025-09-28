@@ -36,7 +36,7 @@ function Avatar({ name }: { name: string }) {
   const initial = (name?.trim()?.[0]||"?").toUpperCase();
   return (
     <div className="h-9 w-9 rounded-2xl grid place-items-center text-white text-sm font-semibold shadow"
-      style={{background:`linear-gradient(135deg, hsl(${hue} 80% 50%), hsl(${(hue+40)%360} 80% 50%)`}}>
+      style={{background:`linear-gradient(135deg, hsl(${hue} 80% 50%), hsl(${(hue+40)%360} 80% 50%))`}}>
       {initial}
     </div>
   );
@@ -49,9 +49,9 @@ function Bubble({ msg, mine }: { msg: Msg; mine: boolean }) {
       <div className="max-w-[80%] flex items-end gap-2">
         {!mine && <Avatar name={msg.user} />}
         <div className={`px-4 py-2 rounded-2xl shadow-sm
-            ${mine ? "bg-gradient-to-br from-indigo-500 to-violet-500 text-white rounded-br-sm"
+            ${mine ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-br-sm"
                    : "bg-white/70 backdrop-blur border rounded-bl-sm"}`}>
-          <div className={`text-[10px] ${mine ? "text-indigo-100/90" : "text-gray-500"} mb-1`}>
+          <div className={`text-[10px] ${mine ? "text-blue-100/90" : "text-gray-500"} mb-1`}>
             {msg.user} · {time}
           </div>
           <div className="whitespace-pre-wrap break-words leading-relaxed">{msg.text}</div>
@@ -68,22 +68,22 @@ function NameStep({ onNext }: { onNext: (name: string) => void }) {
   return (
     <motion.div key="step-name" initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-10}}
       className="mx-auto max-w-lg w-full mt-20">
-      <div className="relative rounded-3xl border bg-white/80 dark:bg-zinc-900/70 backdrop-blur shadow-xl p-8">
-        <div className="absolute -top-6 left-6 h-12 w-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-500 text-white grid place-items-center shadow-lg">💬</div>
-        <h1 className="text-2xl font-semibold mb-2">Welcome to Bubble Chat</h1>
-        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">Choose a nickname to continue.</p>
+      <div className="relative rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-xl p-8">
+        <div className="absolute -top-6 left-6 h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 text-white grid place-items-center shadow-lg">💬</div>
+        <h1 className="text-2xl font-semibold text-white mb-2">Welcome to Music Community</h1>
+        <p className="text-sm text-gray-300 mb-6">Choose a nickname to continue.</p>
 
         <div className="flex gap-2">
           <input autoFocus value={name} onChange={(e)=>setName(e.target.value.slice(0,24))}
             onKeyDown={(e)=>{ if(e.key==="Enter" && name.trim()) onNext(name.trim()); }}
-            placeholder="e.g., Nova" className="flex-1 rounded-2xl border px-4 py-3 outline-none focus:ring-2 focus:ring-violet-500 bg-white/70 dark:bg-zinc-800"/>
+            placeholder="e.g., Nova" className="flex-1 rounded-2xl border border-white/15 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 bg-white/10 text-white placeholder-gray-400"/>
           <motion.button whileTap={{scale:.98}} onClick={()=>name.trim()&&onNext(name.trim())}
             disabled={!name.trim()}
-            className="px-5 py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white font-semibold disabled:opacity-40 shadow">
+            className="px-5 py-3 rounded-2xl bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold disabled:opacity-40 shadow">
             Continue
           </motion.button>
         </div>
-        <p className="text-xs text-gray-500 mt-3">You can change it later in the chat header.</p>
+        <p className="text-xs text-gray-400 mt-3">You can change it later in the chat header.</p>
       </div>
     </motion.div>
   );
@@ -95,23 +95,23 @@ function RoomsStep({ onPick }: { onPick: (roomId: string) => void }) {
     <motion.div key="step-rooms" initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-10}}
       className="mx-auto max-w-6xl w-full mt-14">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-semibold">Choose a room</h2>
-        <p className="text-sm text-gray-600 dark:text-gray-300">Pick a vibe. You can switch rooms anytime.</p>
+        <h2 className="text-3xl font-semibold text-white">Choose a room</h2>
+        <p className="text-sm text-gray-300">Pick a vibe. You can switch rooms anytime.</p>
       </div>
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {ROOMS.map((r,i)=>(
           <motion.button key={r.id} onClick={()=>onPick(r.id)}
             initial={{opacity:0, y:12}} animate={{opacity:1, y:0, transition:{delay:i*0.05}}}
             whileHover={{y:-4, scale:1.02}} whileTap={{scale:.98}}
-            className="group text-left rounded-3xl border bg-white/80 dark:bg-zinc-900/60 backdrop-blur p-5 shadow-lg hover:shadow-xl transition-all">
+            className="group text-left rounded-3xl border border-white/10 bg-white/5 backdrop-blur p-5 shadow-lg hover:shadow-xl transition-all">
             <div className="flex items-center gap-3">
-              <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-indigo-100 to-violet-100 dark:from-zinc-800 dark:to-zinc-700 grid place-items-center text-xl">{r.emoji}</div>
+              <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 grid place-items-center text-xl">{r.emoji}</div>
               <div>
-                <div className="font-semibold">{r.label}</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">{r.desc}</div>
+                <div className="font-semibold text-white">{r.label}</div>
+                <div className="text-xs text-gray-400">{r.desc}</div>
               </div>
             </div>
-            <div className="mt-3 flex items-center gap-2 text-violet-600 dark:text-violet-400 text-sm">
+            <div className="mt-3 flex items-center gap-2 text-blue-400 text-sm">
               <span className="opacity-0 group-hover:opacity-100 transition-opacity">Join room</span>
               <svg className="h-4 w-4 translate-x-0 group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
             </div>
@@ -202,28 +202,28 @@ function ChatStep({
     <motion.div key="step-chat" initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-10}}
       className="min-h-dvh flex flex-col">
       {/* Header */}
-      <div className="sticky top-0 z-10 backdrop-blur bg-white/70 dark:bg-zinc-900/70 border-b">
+      <div className="sticky top-0 z-10 backdrop-blur bg-black/80 border-b border-white/10">
         <div className="max-w-6xl mx-auto p-4 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-500 text-white grid place-items-center font-semibold shadow">💬</div>
-            <div className="text-sm text-gray-600 dark:text-gray-300">
-              Room: <span className="font-medium">{ROOMS.find(r=>r.id===room)?.label}</span> ·{" "}
+            <div className="h-9 w-9 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 text-white grid place-items-center font-semibold shadow">💬</div>
+            <div className="text-sm text-gray-300">
+              Room: <span className="font-medium text-white">{ROOMS.find(r=>r.id===room)?.label}</span> ·{" "}
               <span className="tabular-nums">{online}</span> online ·{" "}
               <span className={`${
-                status === "connecting" ? "text-amber-600" :
-                status === "connected" ? "text-emerald-600" :
-                status === "reconnecting" ? "text-amber-600" :
-                "text-rose-600"
+                status === "connecting" ? "text-amber-400" : 
+                status === "connected" ? "text-green-400" :
+                status === "reconnecting" ? "text-amber-400" : 
+                "text-red-400"
               }`}>{status}</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <select value={room} onChange={(e)=>setRoom(e.target.value)}
-              className="rounded-2xl border px-3 py-2 outline-none focus:ring-2 focus:ring-violet-500 bg-white/70 dark:bg-zinc-800">
-              {ROOMS.map(r=> <option key={r.id} value={r.id}>{r.label}</option>)}
+              className="rounded-2xl border border-white/15 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500 bg-white/10 text-white">
+              {ROOMS.map(r=> <option key={r.id} value={r.id} className="bg-black">{r.label}</option>)}
             </select>
             <input value={nickname} onChange={(e)=>setNickname(e.target.value.slice(0,24))}
-              className="rounded-2xl border px-3 py-2 outline-none focus:ring-2 focus:ring-violet-500 w-44 bg-white/70 dark:bg-zinc-800"
+              className="rounded-2xl border border-white/15 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500 w-44 bg-white/10 text-white placeholder-gray-400"
               placeholder="Your nickname"/>
           </div>
         </div>
@@ -232,7 +232,7 @@ function ChatStep({
       {/* Messages */}
       <div className="flex-1 max-w-6xl mx-auto w-full p-4">
         <div ref={listRef}
-          className="h-[66vh] md:h-[70vh] overflow-y-auto space-y-3 rounded-3xl p-5 border bg-white/70 dark:bg-zinc-900/60 backdrop-blur shadow-xl">
+          className="h-[66vh] md:h-[70vh] overflow-y-auto space-y-3 rounded-3xl p-5 border border-white/10 bg-white/5 backdrop-blur shadow-xl">
           <AnimatePresence initial={false}>
             {msgs.map((m)=> <Bubble key={m.id} msg={m} mine={m.user===nickname}/>)}
           </AnimatePresence>
@@ -243,14 +243,14 @@ function ChatStep({
           <div className="flex items-end gap-2">
             <textarea value={text} onChange={(e)=>setText(e.target.value)} onKeyDown={handleKey} rows={1}
               placeholder="Write a message… (Shift+Enter = newline)"
-              className="flex-1 resize-none rounded-3xl border px-4 py-3 outline-none focus:ring-2 focus:ring-violet-500 bg-white/80 dark:bg-zinc-900/70"/>
+              className="flex-1 resize-none rounded-3xl border border-white/15 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 bg-white/10 text-white placeholder-gray-400"/>
             <motion.button whileTap={{scale:.98}} onClick={send}
               disabled={!text.trim() || status!=="connected"}
-              className="rounded-3xl px-5 py-3 bg-gradient-to-r from-indigo-500 to-violet-500 text-white font-semibold disabled:opacity-40 shadow">
+              className="rounded-3xl px-5 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold disabled:opacity-40 shadow">
               Send
             </motion.button>
           </div>
-          <div className="h-6 mt-1 text-xs text-gray-500 dark:text-gray-400">{typing}</div>
+          <div className="h-6 mt-1 text-xs text-gray-400">{typing}</div>
         </div>
       </div>
     </motion.div>
@@ -262,9 +262,9 @@ function Background() {
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 overflow-hidden">
       <div className="absolute -top-32 -left-32 h-72 w-72 rounded-full blur-3xl opacity-30"
-           style={{background:"radial-gradient(closest-side, rgba(129,140,248,.6), transparent)"}}/>
+           style={{background:"radial-gradient(closest-side, rgba(59,130,246,.6), transparent)"}}/>
       <div className="absolute -bottom-32 -right-32 h-80 w-80 rounded-full blur-3xl opacity-30"
-           style={{background:"radial-gradient(closest-side, rgba(167,139,250,.6), transparent)"}}/>
+           style={{background:"radial-gradient(closest-side, rgba(37,99,235,.6), transparent)"}}/>
     </div>
   );
 }
@@ -279,7 +279,7 @@ export default function ChatFlowPage() {
   const picked = (rid:string)=>{ setRoom(rid); localStorage.setItem(LS_KEY_ROOM,rid); setPhase("chat"); };
 
   return (
-    <div className="min-h-dvh relative bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-50 via-white to-violet-50 dark:from-black dark:via-zinc-950 dark:to-black text-gray-900 dark:text-gray-100">
+    <div className="min-h-dvh relative bg-gradient-to-br from-neutral-950 via-slate-900/30 to-neutral-950 text-white pt-24">
       <Background/>
       <AnimatePresence mode="wait">
         {phase==="name"  && <NameStep  key="name"  onNext={named} />}
@@ -289,4 +289,3 @@ export default function ChatFlowPage() {
     </div>
   );
 }
-
