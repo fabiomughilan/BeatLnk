@@ -170,15 +170,6 @@ NEXT_PUBLIC_PUSH_CONFIG=enabled
 * App: **[https://beat-link.mithranmv.com/](https://beat-link.mithranmv.com/)**
 * Status: **Live on World Chain Mainnet**
 
----
-
-## 🤖 AI assistance (hackathon)
-
-* ChatGPT — scaffolding, docs, quick iterations.
-* Claude — Solidity review & access-control logic hints.
-* Copilot — inline UI/SDK suggestions.
-
-*No AI used for cryptographic proofs; those rely on Reclaim/zkTLS.*
 
 ---
 
